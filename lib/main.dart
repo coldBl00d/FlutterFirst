@@ -19,7 +19,7 @@ class MyApp extends StatelessWidget {
       appBar: AppBar(
         title: Text('EasyList'),
       ),
-      body: ProductManager(),
+      body: ProductManager("First"),
     ));
     //core root widget -- MAterialApp
     //build should always return a widget until it returns a flutter widget.
