@@ -15,12 +15,14 @@ class MyApp extends StatelessWidget {
     // TODO: implement build
     //Scaffold create the white page
     return MaterialApp(
+        theme: ThemeData(
+            brightness: Brightness.light, primarySwatch: Colors.deepPurple),
         home: Scaffold(
-      appBar: AppBar(
-        title: Text('EasyList'),
-      ),
-      body: ProductManager("First"),
-    ));
+          appBar: AppBar(
+            title: Text('EasyList'),
+          ),
+          body: ProductManager("First"),
+        ));
     //core root widget -- MAterialApp
     //build should always return a widget until it returns a flutter widget.
   }
