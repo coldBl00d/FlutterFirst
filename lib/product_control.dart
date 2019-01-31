@@ -12,7 +12,7 @@ class ProductControl extends StatelessWidget {
       child: Text("Add Product"),
       onPressed: () {
         //add data here
-        addProduct("New Product");
+        addProduct({'title':'Chocolate','image':'assets/food.jpg' });
       },
     );
   }
