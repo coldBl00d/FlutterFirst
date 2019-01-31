@@ -26,10 +26,9 @@ class _ProductManagerState extends State<ProductManager> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    if(widget.startingProduct != null){
+    if (widget.startingProduct != null) {
       this._products.add(widget.startingProduct);
     }
-    
   }
 
   void _addProduct(Map<String, String> newProduct) {
@@ -47,7 +46,7 @@ class _ProductManagerState extends State<ProductManager> {
         child: ProductControl(_addProduct),
       ),
       Expanded(
-        child: Products(products:_products),
+        child: Products(products: _products),
       )
     ]);
   }

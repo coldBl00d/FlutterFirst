@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
 
 class ProductPage extends StatelessWidget {
-
   final String title;
   final String imageUrl;
-
 
   ProductPage({this.title, this.imageUrl});
 
@@ -22,8 +20,11 @@ class ProductPage extends StatelessWidget {
           Container(
               padding: EdgeInsets.all(10.0),
               child: RaisedButton(
-                color:Theme.of(context).accentColor,
-                child: Text('Back', style: TextStyle(color: Colors.white70),),
+                color: Theme.of(context).accentColor,
+                child: Text(
+                  'Back',
+                  style: TextStyle(color: Colors.white70),
+                ),
                 onPressed: () => Navigator.pop(context),
               ))
         ],

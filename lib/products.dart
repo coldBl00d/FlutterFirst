@@ -4,7 +4,7 @@ import './pages/product.dart';
 class Products extends StatelessWidget {
   final List<Map<String, String>> products;
 
-  Products({this.products = const[]});
+  Products({this.products = const []});
 
   //Build a card for product at index
   Widget _getProductCardItem(BuildContext context, int index) => Card(
@@ -20,8 +20,10 @@ class Products extends StatelessWidget {
                 onPressed: () => Navigator.push(
                     context,
                     MaterialPageRoute(
-                        builder: (BuildContext context) =>
-                            ProductPage(title:this.products[index]['title'], imageUrl:this.products[index]['image']))), //MaterialPageRouter -- needed for animation
+                        builder: (BuildContext context) => ProductPage(
+                            title: this.products[index]['title'],
+                            imageUrl: this.products[index][
+                                'image']))), //MaterialPageRouter -- needed for animation
               )
             ],
           )
