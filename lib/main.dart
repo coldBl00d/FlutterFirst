@@ -9,9 +9,9 @@ import 'package:flutter/rendering.dart';
 } */
 
 //this is equivalent to above
-void main(){  
+void main() {
   //debugPaintSizeEnabled = true;
-  runApp(MyApp()); 
+  runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
