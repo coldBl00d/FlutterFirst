@@ -5,6 +5,9 @@ import './product_list.dart';
 
 class ManageProductsPage extends StatelessWidget{
 
+  ManageProductsPage();
+
+
   @override
   Widget build(BuildContext context) {
     // TODO: implement build

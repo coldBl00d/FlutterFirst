@@ -16,14 +16,7 @@ class Products extends StatelessWidget {
             ButtonBar(alignment: MainAxisAlignment.center, children: <Widget>[
               FlatButton(
                 child: Text('Detail'),
-                onPressed: () => Navigator.push<bool>(
-                    context,
-                    MaterialPageRoute(
-                        builder: (BuildContext context) => ProductPage(
-                            title: this.products[index]['title'],
-                            imageUrl: this.products[index]
-                                ['image'])) //MaterialPageRoute
-                    ).then((bool doDelete) {
+                onPressed: () => Navigator.pushNamed<bool>(context, '/product/'+index.toString()).then((bool doDelete) {
                       if(doDelete){
                         this.deleteProduct(index);
                       }

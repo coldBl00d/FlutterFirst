@@ -5,7 +5,28 @@ class ProductPage extends StatelessWidget {
   final String title;
   final String imageUrl;
 
-  ProductPage({this.title, this.imageUrl});
+  ProductPage({this.title='Unknown', this.imageUrl='assets/food.jpg'});
+
+  _showWarningDialogue(BuildContext context){
+    showDialog(
+      context: context, 
+      builder: (BuildContext context){
+        return AlertDialog(
+          title: Text("Are you sure"),
+          content: Text("This action cannot be undone"),
+          actions: <Widget>[
+            FlatButton(child: Text("Discard"), onPressed: () => Navigator.pop(context),),
+            FlatButton(child: Text("Continue"), 
+              onPressed: () {
+                Navigator.pop(context);
+                Navigator.pop(context, true);
+              }
+            )
+          ],
+        );
+      }
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -30,7 +51,9 @@ class ProductPage extends StatelessWidget {
                   'Delete',
                   style: TextStyle(color: Colors.white70),
                 ),
-                onPressed: () => Navigator.pop(context, true),
+                onPressed: (){
+                  _showWarningDialogue(context);
+                } //=> Navigator.pop(context, true),
               ))
         ],
       ),

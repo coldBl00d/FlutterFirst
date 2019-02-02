@@ -3,6 +3,7 @@ import './pages/auth.dart';
 import 'package:flutter/rendering.dart';
 import './pages/manage_products.dart';
 import './pages/products.dart';
+import './pages/product.dart';
 
 /*void main() {
   //provided by material file of flutter package
@@ -15,7 +16,32 @@ void main() {
   runApp(MyApp());
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
+  
+  @override
+  State<StatefulWidget> createState() {
+    // TODO: implement createState
+    return _MyAppState();
+  }
+
+} 
+
+class _MyAppState extends State<MyApp> {
+
+  final List<Map<String, String>> _products = [];
+
+  void _addProduct(Map<String, String> newProduct) {
+    setState(() {
+      this._products.add(newProduct);
+    });
+  }
+
+  void _deleteProduct(int index){
+    setState(() {
+      this._products.removeAt(index);
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     // TODO: implement build
@@ -25,11 +51,35 @@ class MyApp extends StatelessWidget {
             brightness: Brightness.light, primarySwatch: Colors.deepPurple),
         //home: AuthPage(),
         routes: {
-          '/': (BuildContext context) => ProductsPage(), //represents home --> either have this or home argument in the material app
+          '/': (BuildContext context) => ProductsPage(this._products,this._deleteProduct, this._addProduct), //represents home --> either have this or home argument in the material app
           '/admin': (BuildContext context) => ManageProductsPage(),
+          //'/product':(BuildContext context) => ProductPage()
         },
-        );
+        onGenerateRoute: (RouteSettings settings){ //a function that will be called when we navigate to a named route which is not registered in the routes registery
+          final List<String> pathElement = settings.name.split('/');
+          if(pathElement[0]!=''){
+            //this will not load any page
+            return null;
+          }
+          if(pathElement[1] == 'product'){
+             final int index = int.parse(pathElement[2]);
+             return MaterialPageRoute<bool>(builder: (BuildContext context) {
+              return ProductPage(title:this._products[index]['title'], imageUrl:this._products[index]['image']);
+            });
+          }
+         
+        },
+
+        onUnknownRoute: (RouteSettings settings){
+          return MaterialPageRoute(builder: (BuildContext context){
+            return ProductsPage(_products, _deleteProduct, _addProduct);
+          }); 
+        },
+
+      );
     //core root widget -- MAterialApp
     //build should always return a widget until it returns a flutter widget.
   }
+  
 }
+

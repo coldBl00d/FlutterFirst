@@ -4,6 +4,12 @@ import './manage_products.dart';
 import '../widgets/my_drawer.dart';
 
 class ProductsPage extends StatelessWidget {
+  final List<Map<String, String>> _products;
+  final Function _addProduct;
+  final Function _deleteProduct;
+  
+  ProductsPage(this._products, this._deleteProduct, this._addProduct);
+
   @override
   Widget build(BuildContext context) {
     // TODO: implement build
@@ -27,7 +33,7 @@ class ProductsPage extends StatelessWidget {
       appBar: AppBar(
         title: Text('Home'),
       ),
-      body: ProductManager(),
+      body: ProductManager(this._products, this._addProduct, this._deleteProduct),
     );
   }
 }
