@@ -14,9 +14,12 @@ class ProductsPage extends StatelessWidget {
           children: <Widget>[
             AppBar(title: Text("Choose"),automaticallyImplyLeading: false,),
             ListTile(title: Text("Manage Products"),onTap: (){
+              //named navigation
+              Navigator.pushReplacementNamed(context, '/admin');
+              /*un named navigation
               Navigator.pushReplacement(context, MaterialPageRoute(builder: (BuildContext context){
                 return ManageProductsPage();
-              }));
+              }));*/
             },)
           ],
         ),
