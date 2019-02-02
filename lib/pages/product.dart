@@ -51,9 +51,7 @@ class ProductPage extends StatelessWidget {
                   'Delete',
                   style: TextStyle(color: Colors.white70),
                 ),
-                onPressed: (){
-                  _showWarningDialogue(context);
-                } //=> Navigator.pop(context, true),
+                onPressed: () =>_showWarningDialogue(context) //=> Navigator.pop(context, true),
               ))
         ],
       ),
