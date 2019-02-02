@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import './product_manager.dart';
-import './pages/home.dart';
+import './pages/auth.dart';
 import 'package:flutter/rendering.dart';
 
 /*void main() {
@@ -22,7 +21,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
         theme: ThemeData(
             brightness: Brightness.light, primarySwatch: Colors.deepPurple),
-        home: HomePage());
+        home: AuthPage());
     //core root widget -- MAterialApp
     //build should always return a widget until it returns a flutter widget.
   }
