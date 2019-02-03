@@ -1,25 +1,21 @@
 import 'package:flutter/material.dart';
 import './products.dart';
-import './product_control.dart';
+
 
 class ProductManager extends StatelessWidget {
   //final Map<String, String> startingProduct;
-  final List<Map<String, String>> _products;
-  final Function _addProduct;
-  final Function _deleteProduct;
+  final List<Map<String, dynamic>> _products;
+  //final Function _addProduct;
+  //final Function _deleteProduct;
 
-  ProductManager(this._products, this._addProduct,this._deleteProduct);
+  ProductManager(this._products);
 
   @override
   Widget build(BuildContext context) {
     // TODO: implement build
     return Column(children: [
-      Container(
-        margin: EdgeInsets.all(6.0),
-        child: ProductControl(_addProduct),
-      ),
       Expanded(
-        child: Products(_products, deleteProduct: this._deleteProduct),
+        child: Products(_products),
       )
     ]);
   }

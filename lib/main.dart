@@ -28,9 +28,9 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
 
-  final List<Map<String, String>> _products = [];
+  final List<Map<String, dynamic>> _products = [];
 
-  void _addProduct(Map<String, String> newProduct) {
+  void _addProduct(Map<String, dynamic> newProduct) {
     setState(() {
       this._products.add(newProduct);
     });
@@ -48,11 +48,12 @@ class _MyAppState extends State<MyApp> {
     //Scaffold create the white page
     return MaterialApp(
         theme: ThemeData(
-            brightness: Brightness.light, primarySwatch: Colors.deepPurple),
+            brightness: Brightness.light, primarySwatch: Colors.deepPurple, accentColor: Colors.pinkAccent),
         //home: AuthPage(),
         routes: {
-          '/': (BuildContext context) => ProductsPage(this._products,this._deleteProduct, this._addProduct), //represents home --> either have this or home argument in the material app
-          '/admin': (BuildContext context) => ManageProductsPage(),
+          '/': (BuildContext context) => AuthPage(), //represents home --> either have this or home argument in the material app
+          '/products':(BuildContext context) => ProductsPage(this._products),
+          '/admin': (BuildContext context) => ManageProductsPage(this._addProduct, this._deleteProduct),
           //'/product':(BuildContext context) => ProductPage()
         },
         onGenerateRoute: (RouteSettings settings){ //a function that will be called when we navigate to a named route which is not registered in the routes registery
@@ -72,7 +73,7 @@ class _MyAppState extends State<MyApp> {
 
         onUnknownRoute: (RouteSettings settings){
           return MaterialPageRoute(builder: (BuildContext context){
-            return ProductsPage(_products, _deleteProduct, _addProduct);
+            return ProductsPage(_products);
           }); 
         },
 

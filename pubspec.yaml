@@ -35,10 +35,16 @@ flutter:
   # included with your application, so that you can use the icons in
   # the material Icons class.
   uses-material-design: true
+  fonts:
+    - family: Oswald
+      fonts:
+        - asset: assets/Oswald-Bold.ttf
+          weight: 700
 
   # To add assets to your application, add an assets section, like this:
   assets:
     - assets/food.jpg
+    - assets/background.jpg
   #  - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see
@@ -58,11 +64,13 @@ flutter:
   #       - asset: fonts/Schyler-Regular.ttf
   #       - asset: fonts/Schyler-Italic.ttf
   #         style: italic
-  #   - family: Trajan Pro
+  #  - family: Oswald
   #     fonts:
-  #       - asset: fonts/TrajanPro.ttf
+  #       - asset: assets/Oswald-Bold.ttf
   #       - asset: fonts/TrajanPro_Bold.ttf
   #         weight: 700
+
+
   #
   # For details regarding fonts from package dependencies,
   # see https://flutter.io/custom-fonts/#from-packages

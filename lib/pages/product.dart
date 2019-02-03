@@ -42,6 +42,7 @@ class ProductPage extends StatelessWidget {
       body: Column(
         children: <Widget>[
           Image.asset(imageUrl),
+          SizedBox(height: 20.0,),
           Container(padding: EdgeInsets.all(10.0), child: Text(this.title)),
           Container(
               padding: EdgeInsets.all(10.0),
