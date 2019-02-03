@@ -39,7 +39,7 @@ class CreateProductState extends State<CreateProduct>{
         
           TextField(
             decoration: InputDecoration(
-              labelText: '_Price',
+              labelText: 'Price',
             //icon: Icon(Icons.edit)
             ),
             onChanged: (String i){
@@ -50,7 +50,7 @@ class CreateProductState extends State<CreateProduct>{
         
           TextField(
             decoration: InputDecoration(
-              labelText: '_Description',
+              labelText: 'Description',
             //icon: Icon(Icons.edit)
             ),
             keyboardType: TextInputType.multiline,

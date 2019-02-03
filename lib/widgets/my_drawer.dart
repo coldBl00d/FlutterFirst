@@ -16,7 +16,7 @@ class MyDrawer extends StatelessWidget{
           title: Text("Choose"),
           
         ),
-        ListTile(title: Text("All Products"), onTap: () {
+        ListTile(leading: Icon(Icons.shop),title: Text("All Products"), onTap: () {
           Navigator.pushReplacementNamed(context, '/products');
         },),
       ],

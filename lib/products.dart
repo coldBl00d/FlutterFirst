@@ -35,14 +35,18 @@ class Products extends StatelessWidget {
               borderRadius: BorderRadius.circular(5.0)
             ),),
             ButtonBar(alignment: MainAxisAlignment.center, children: <Widget>[
-              FlatButton(
-                child: Text('Detail'),
+              IconButton(
+                color: Theme.of(context).primaryColor,
+                icon: Icon(Icons.info,),
                 onPressed: () => Navigator.pushNamed<bool>(context, '/product/'+index.toString()).then((bool doDelete) {
                       if(doDelete){
                         //this.deleteProduct(index);
                       }
                     }), //Navigator
               ),
+              SizedBox(width: 5.0,),
+              IconButton(
+                color: Colors.red,icon: Icon(Icons.favorite_border), onPressed: (){},)
             ] //MaterialPageRouter -- needed for animation
                 )
           ],
