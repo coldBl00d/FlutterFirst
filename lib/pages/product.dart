@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'dart:async';
 import '../widgets/products/price.dart';
+import '../widgets/ui_elements/title_default.dart';
 
 class ProductPage extends StatelessWidget {
   final String title;
@@ -52,7 +53,7 @@ class ProductPage extends StatelessWidget {
               SliverAppBar(
                 expandedHeight: 250,
                 flexibleSpace: FlexibleSpaceBar(
-                    title: Text(this.title),
+                    title: TitleDefault(this.title),
                     background: Image(
                       image: AssetImage('assets/food.jpg'),
                       fit: BoxFit.cover,
