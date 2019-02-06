@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import '../product_manager.dart';
 import '../pages/products.dart';
 
 class AuthPage extends StatefulWidget {

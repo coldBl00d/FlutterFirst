@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
-import '../product_manager.dart';
 import './manage_products.dart';
 import '../widgets/my_drawer.dart';
+import '../widgets/products/products.dart';
+
 
 class ProductsPage extends StatelessWidget {
   final List<Map<String, dynamic>> _products;
@@ -46,7 +47,7 @@ class ProductsPage extends StatelessWidget {
           )
         ],
       ),
-      body: ProductManager(this._products),
+      body: Products(this._products),
     );
   }
 }

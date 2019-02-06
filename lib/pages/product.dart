@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'dart:async';
+import '../widgets/products/price.dart';
 
 class ProductPage extends StatelessWidget {
   final String title;
@@ -77,23 +78,14 @@ class ProductPage extends StatelessWidget {
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.end,
                               children: <Widget>[
-                                Container(
-                                  padding: EdgeInsets.all(5.0),
-                                  decoration: BoxDecoration(
-                                      color: Theme.of(context).accentColor,
-                                      borderRadius: BorderRadius.circular(5.0)),
-                                  child: Text(
-                                    "\$" + this.price.toString(),
-                                    style: TextStyle(color: Colors.white),
-                                  ),
-                                ),
+                                PriceTag(this.price.toString()),
                               ],
                             ),
                           ),
                           Container(
                             padding: EdgeInsets.all(10),
                             child: Column(
-                              children: <Widget>[Text(this.description)],
+                              children: <Widget>[Text(this.description == null ? "Nothing here ... ": this.description)],
                             ),
                           )
                         ],
