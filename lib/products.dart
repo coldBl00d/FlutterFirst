@@ -2,33 +2,51 @@ import 'package:flutter/material.dart';
 import './pages/product.dart';
 
 class Products extends StatelessWidget {
-  final List<Map<String, String>> products;
-  final Function deleteProduct;
+  final List<Map<String, dynamic>> products;
 
-  Products(this.products, {this.deleteProduct});
+  Products(this.products);
 
   //Build a card for product at index
   Widget _getProductCardItem(BuildContext context, int index) => Card(
         child: Column(
           children: <Widget>[
             Image.asset(products[index]['image']),
-            Text(products[index]['title']),
+            Container(
+              //color: Colors.red,
+              
+              padding: EdgeInsets.symmetric(vertical: 5.0),
+              child: Row(
+                
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                Text(products[index]['title'], style: TextStyle(fontSize: 26.0,fontWeight: FontWeight.bold, fontFamily: 'Oswald'),),
+                SizedBox(width: 8.0,),
+                Container (
+                  padding: EdgeInsets.symmetric(horizontal: 6.0, vertical: 2.5),
+                  decoration: BoxDecoration(color: Theme.of(context).accentColor, borderRadius: BorderRadius.circular(5.0)),
+                  child:Text("\$"+products[index]['price'].toString(), style: TextStyle(color: Colors.white),)),
+              ],),  
+            ),
+            Container(
+              padding: EdgeInsets.symmetric(vertical: 2.5, horizontal: 6.0),
+              child: Text("Union Square, San Franscisco"),
+              decoration: BoxDecoration(
+              border: Border.all(color: Colors.grey, width: 1.0),
+              borderRadius: BorderRadius.circular(5.0)
+            ),),
             ButtonBar(alignment: MainAxisAlignment.center, children: <Widget>[
-              FlatButton(
-                child: Text('Detail'),
-                onPressed: () => Navigator.push<bool>(
-                        context,
-                        MaterialPageRoute(
-                            builder: (BuildContext context) => ProductPage(
-                                title: this.products[index]['title'],
-                                imageUrl: this.products[index]
-                                    ['image'])) //MaterialPageRoute
-                        ).then((bool doDelete) {
-                      if (doDelete) {
-                        this.deleteProduct(index);
+              IconButton(
+                color: Theme.of(context).primaryColor,
+                icon: Icon(Icons.info,),
+                onPressed: () => Navigator.pushNamed<bool>(context, '/product/'+index.toString()).then((bool doDelete) {
+                      if(doDelete){
+                        //this.deleteProduct(index);
                       }
                     }), //Navigator
               ),
+              SizedBox(width: 5.0,),
+              IconButton(
+                color: Colors.red,icon: Icon(Icons.favorite_border), onPressed: (){},)
             ] //MaterialPageRouter -- needed for animation
                 )
           ],
