@@ -85,7 +85,8 @@ class AuthPageState extends State<AuthPage> {
         body: Container(
             decoration: BoxDecoration(image: this._buildDecorationImage()),
             padding: EdgeInsets.all(10.0),
-            child: Center(
+            child: Container(
+              alignment: Alignment.center,
               child: SingleChildScrollView(
                 child: Column(
                   children: <Widget>[
