@@ -9,16 +9,9 @@ class ProductCard extends StatelessWidget {
 
   ProductCard(this.product, this.index);
 
-  @override
-  Widget build(BuildContext context) {
-    // TODO: implement build
-    return Card(
-      child: Column(
-        children: <Widget>[
-          Image.asset(product['image']),
-          Container(
+  Widget _buildTitlePriceRow(){
+    return Container(
             //color: Colors.red,
-
             padding: EdgeInsets.symmetric(vertical: 5.0),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -30,9 +23,11 @@ class ProductCard extends StatelessWidget {
                 PriceTag(this.product['price'].toString()),
               ],
             ),
-          ),
-          AddressTag(), //Add address as parameter
-          ButtonBar(alignment: MainAxisAlignment.center, children: <Widget>[
+          );
+  }
+
+  Widget _buildButtons(BuildContext context){
+    return ButtonBar(alignment: MainAxisAlignment.center, children: <Widget>[
             IconButton(
               color: Theme.of(context).primaryColor,
               icon: Icon(
@@ -55,7 +50,19 @@ class ProductCard extends StatelessWidget {
               onPressed: () {},
             )
           ] //MaterialPageRouter -- needed for animation
-              )
+              );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    // TODO: implement build
+    return Card(
+      child: Column(
+        children: <Widget>[
+          Image.asset(product['image']),
+          this._buildTitlePriceRow(),
+          AddressTag(), //Add address as parameter
+          this._buildButtons(context) 
         ],
       ),
     );

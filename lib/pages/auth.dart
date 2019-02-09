@@ -15,24 +15,16 @@ class AuthPage extends StatefulWidget {
 class AuthPageState extends State<AuthPage> {
   bool _accept = false;
 
-  Widget generateAuthPage(context) {
-    return Scaffold(
-        appBar: AppBar(
-          title: Text("Please enter your credentials"),
-        ),
-        body: Container(
-            decoration: BoxDecoration(
-                image: DecorationImage(
-                    image: AssetImage('assets/background.jpg'),
-                    fit: BoxFit.cover,
-                    colorFilter: ColorFilter.mode(
-                        Colors.black.withOpacity(0.4), BlendMode.dstATop))),
-            padding: EdgeInsets.all(10.0),
-            child: Center(
-                child: SingleChildScrollView(
-                    child: Column(
-              children: <Widget>[
-                TextField(
+  DecorationImage _buildDecorationImage(){
+    return DecorationImage(
+            image: AssetImage('assets/background.jpg'),
+            fit: BoxFit.cover,
+            colorFilter: ColorFilter.mode(Colors.black.withOpacity(0.4), BlendMode.dstATop)
+          );
+  }
+
+  Widget _buildEmailTF(){
+    return TextField(
                   keyboardType: TextInputType.emailAddress,
                   onChanged: (String i) {
                     widget._email = i;
@@ -41,11 +33,11 @@ class AuthPageState extends State<AuthPage> {
                       filled: true,
                       fillColor: Colors.white,
                       labelText: "Email Id"),
-                ),
-                SizedBox(
-                  height: 10.0,
-                ),
-                TextField(
+                );
+  }
+
+  Widget _buildPasswordTF(){
+    return TextField(
                   onChanged: (String i) {
                     widget._password = i;
                   },
@@ -55,8 +47,11 @@ class AuthPageState extends State<AuthPage> {
                     filled: true,
                     fillColor: Colors.white,
                   ),
-                ),
-                SwitchListTile(
+                );
+  }
+
+  Widget _buildAcceptSwitch(){
+    return SwitchListTile(
                   title: Text("Accept"),
                   value: _accept,
                   onChanged: (bool value) {
@@ -64,22 +59,44 @@ class AuthPageState extends State<AuthPage> {
                       _accept = value;
                     });
                   },
-                ),
-                SizedBox(
-                  height: 10.0,
-                ),
-                RaisedButton(
+                );
+  }
+
+  void submit(){
+    print(widget._email);
+    print(widget._password);
+    Navigator.pushReplacementNamed(context, '/products');
+  }
+
+  Widget _buildLoginButton(){
+    return RaisedButton(
                   color: Theme.of(context).accentColor,
                   textColor: Colors.white70,
                   child: Text("Login"),
-                  onPressed: () {
-                    print(widget._email);
-                    print(widget._password);
-                    Navigator.pushReplacementNamed(context, '/products');
-                  },
-                )
-              ],
-            )))));
+                  onPressed: this.submit
+                );
+  }
+
+  Widget generateAuthPage(context) {
+    return Scaffold(
+        appBar: AppBar(
+          title: Text("Please enter your credentials"),
+        ),
+        body: Container(
+            decoration: BoxDecoration(image: this._buildDecorationImage()),
+            padding: EdgeInsets.all(10.0),
+            child: Center(
+              child: SingleChildScrollView(
+                child: Column(
+                  children: <Widget>[
+                    this._buildEmailTF(),
+                    SizedBox(height: 10.0),
+                    this._buildPasswordTF(),
+                    this._buildAcceptSwitch(),
+                    SizedBox(height: 10.0,),
+                    this._buildLoginButton()
+                  ],
+              )))));
   }
 
   @override
