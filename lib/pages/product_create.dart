@@ -95,8 +95,15 @@ class CreateProductState extends State<CreateProduct> {
                 "Save",
               ),
               onPressed: this._submitForm,
-              color: Theme.of(context).accentColor,
             )
+            /*GestureDetector(
+              onTap: _submitForm,
+              child: Container(
+                color: Colors.green,
+                padding: EdgeInsets.all(5.0),
+                child: Text("My Button"),
+              )
+            )*/
           ],
         ));
   }
