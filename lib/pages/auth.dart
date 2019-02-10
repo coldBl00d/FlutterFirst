@@ -78,6 +78,9 @@ class AuthPageState extends State<AuthPage> {
   }
 
   Widget generateAuthPage(context) {
+    final double deviceWidth = MediaQuery.of(context).size.width;
+    final double _targetWidth = deviceWidth > 500.0 ? 500.0 : deviceWidth * 0.95;
+
     return Scaffold(
         appBar: AppBar(
           title: Text("Please enter your credentials"),
@@ -85,10 +88,11 @@ class AuthPageState extends State<AuthPage> {
         body: Container(
             decoration: BoxDecoration(image: this._buildDecorationImage()),
             padding: EdgeInsets.all(10.0),
-            child: Container(
-              alignment: Alignment.center,
+            child: Center(
               child: SingleChildScrollView(
-                child: Column(
+                child:Container(
+                  width: _targetWidth,
+                  child: Column(
                   children: <Widget>[
                     this._buildEmailTF(),
                     SizedBox(height: 10.0),
@@ -97,7 +101,9 @@ class AuthPageState extends State<AuthPage> {
                     SizedBox(height: 10.0,),
                     this._buildLoginButton()
                   ],
-              )))));
+                ),
+
+                ) ))));
   }
 
   @override
