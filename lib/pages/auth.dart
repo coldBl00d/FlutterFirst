@@ -2,11 +2,7 @@ import 'package:flutter/material.dart';
 import '../pages/products.dart';
 
 class AuthPage extends StatefulWidget {
-  final Map<String, String> _creds = {
-    'email':null, 
-    'password':null
-  };
-  
+  final Map<String, dynamic> _creds = {'email': null, 'password': null, 'agreed':false};
 
   @override
   State<StatefulWidget> createState() {
@@ -16,8 +12,7 @@ class AuthPage extends StatefulWidget {
 }
 
 class AuthPageState extends State<AuthPage> {
-  bool _accept = false;
-  final GlobalKey<FormState> authKey =GlobalKey<FormState>();
+  final GlobalKey<FormState> authKey = GlobalKey<FormState>();
 
   DecorationImage _buildDecorationImage() {
     return DecorationImage(
@@ -30,15 +25,18 @@ class AuthPageState extends State<AuthPage> {
   Widget _buildEmailTF() {
     return TextFormField(
       keyboardType: TextInputType.emailAddress,
-      validator: (String email){
-        bool validated = true; 
-        validated &=RegExp(r"[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?").hasMatch(email);
-        if(!validated){
+      validator: (String email) {
+        bool validated = true;
+        //validated &= (!email.isEmpty);
+        validated &= RegExp(
+                r"[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?")
+            .hasMatch(email);
+        if (!validated) {
           return "Ops this doesnt looks like an email address";
         }
       },
       onSaved: (String i) {
-         widget._creds['email'] = i;
+        widget._creds['email'] = i;
       },
       decoration: InputDecoration(
           filled: true, fillColor: Colors.white, labelText: "Email Id"),
@@ -50,11 +48,12 @@ class AuthPageState extends State<AuthPage> {
       onSaved: (String i) {
         widget._creds['password'] = i;
       },
-      validator: (String password){
-        bool validated = true; 
+      validator: (String password) {
+        bool validated = true;
         validated &= (!password.isEmpty);
         validated &= (password.length > 5);
-        if(!validated){
+        print("Password validation "+validated.toString());
+        if (!validated) {
           return "Password should be more than 5 characters long";
         }
       },
@@ -70,18 +69,23 @@ class AuthPageState extends State<AuthPage> {
   Widget _buildAcceptSwitch() {
     return SwitchListTile(
       title: Text("Accept"),
-      value: _accept,
+      value: widget._creds['agreed'],
       onChanged: (bool value) {
         setState(() {
-          _accept = value;
+          widget._creds['agreed'] = value;
         });
       },
     );
   }
 
   void submit() {
-    if(!this.authKey.currentState.validate()) return;
+    print(widget._creds['agreed']);
+    if (!this.authKey.currentState.validate() || !(widget._creds['agreed'])) return;
     this.authKey.currentState.save();
+    print(widget._creds['email']);
+    print(widget._creds['password']);
+  
+    
     Navigator.pushReplacementNamed(context, '/products');
   }
 
@@ -98,35 +102,36 @@ class AuthPageState extends State<AuthPage> {
         deviceWidth > 500.0 ? 500.0 : deviceWidth * 0.95;
 
     return Scaffold(
-        appBar: AppBar(
-          title: Text("Please enter your credentials"),
-        ),
-        body: Form(
-          key: authKey,
-          child: Container(
-            decoration: BoxDecoration(image: this._buildDecorationImage()),
-            padding: EdgeInsets.all(10.0),
-            child: Center(
-              child: SingleChildScrollView(
-                child: Container(
-                  width: _targetWidth,
-                  child: Column(
-                    children: <Widget>[
-                      this._buildEmailTF(),
-                      SizedBox(height: 10.0),
-                      this._buildPasswordTF(),
-                      this._buildAcceptSwitch(),
-                      SizedBox(
-                        height: 10.0,
-                      ),
-                      this._buildLoginButton()
-                    ],
-                  ),
+      appBar: AppBar(
+        title: Text("Please enter your credentials"),
+      ),
+      body: Form(
+        key: authKey,
+        child: Container(
+          decoration: BoxDecoration(image: this._buildDecorationImage()),
+          padding: EdgeInsets.all(10.0),
+          child: Center(
+            child: SingleChildScrollView(
+              child: Container(
+                width: _targetWidth,
+                child: Column(
+                  children: <Widget>[
+                    this._buildEmailTF(),
+                    SizedBox(height: 10.0),
+                    this._buildPasswordTF(),
+                    this._buildAcceptSwitch(),
+                    SizedBox(
+                      height: 10.0,
+                    ),
+                    this._buildLoginButton()
+                  ],
                 ),
               ),
             ),
           ),
-        ));
+        ),
+      ),
+    );
   }
 
   @override
