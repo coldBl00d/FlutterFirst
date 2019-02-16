@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 
 class CreateProduct extends StatefulWidget {
   Function _addProduct;
-  
 
   CreateProduct(this._addProduct);
 
@@ -17,7 +16,7 @@ class CreateProductState extends State<CreateProduct> {
   String _name;
   double _price;
   String _desc;
-  final GlobalKey<FormState> formKey = GlobalKey<FormState>(); 
+  final GlobalKey<FormState> formKey = GlobalKey<FormState>();
 
   Widget _buildTitleTF() {
     return TextFormField(
@@ -32,8 +31,10 @@ class CreateProductState extends State<CreateProduct> {
       //   //});
       // },
       validator: (String value) {
-        if(value.isEmpty){
+        if (value.isEmpty) {
           return "Title is required";
+        } else if (value.length < 5) {
+          return "Value needs to be atleast 5 characters";
         }
       },
     );
@@ -45,30 +46,47 @@ class CreateProductState extends State<CreateProduct> {
         labelText: 'Price',
         //icon: Icon(Icons.edit)
       ),
-      onSaved: (String i) => this._price = double.parse(i),
+      onSaved: (String i) =>
+          this._price = double.parse(i.replaceFirst(RegExp(r','), '.')),
       // onChanged: (String i) {
       //   this._price = double.parse(i);
       // },
       keyboardType: TextInputType.number,
+      validator: (String value) {
+        if (value.isEmpty) {
+          return "Price is required";
+        } else if (!RegExp(r'^(?:[1-9]\d*|0)?(?:[.,]\d+)?$').hasMatch(value)) {
+          return "Price needs to be a number";
+        }
+      },
     );
   }
 
   Widget _buildDescTF() {
     return TextFormField(
-        decoration: InputDecoration(
-          labelText: 'Description',
-          //icon: Icon(Icons.edit)
-        ),
-        keyboardType: TextInputType.multiline,
-        maxLines: 5,
-        onSaved: (String i) => this._desc = i);
-        //onChanged: (String i) => this._desc = i);
+      decoration: InputDecoration(
+        labelText: 'Description',
+        //icon: Icon(Icons.edit)
+      ),
+      keyboardType: TextInputType.multiline,
+      maxLines: 5,
+      onSaved: (String i) => this._desc = i,
+      validator: (String value) {
+        if (value.isEmpty) {
+          return "Description is required";
+        } else if (value.length < 10) {
+          return "Description needs to be atleast 10 characters";
+        }
+      },
+    );
+    //onChanged: (String i) => this._desc = i);
   }
 
   void _submitForm() {
     bool validated = formKey.currentState.validate();
-    if(!validated) return;
-    formKey.currentState.save(); //this will call onsave of all child of the forum. 
+    if (!validated) return;
+    formKey.currentState
+        .save(); //this will call onsave of all child of the forum.
     final Map<String, dynamic> product = {
       'title': this._name,
       'desc': this._desc,
@@ -85,34 +103,33 @@ class CreateProductState extends State<CreateProduct> {
 
   @override
   Widget build(BuildContext context) {
-
     final double _deviceWidth = MediaQuery.of(context).size.width;
     final double _targetWidth = _deviceWidth > 550 ? 500 : _deviceWidth * 0.95;
     final double _targetPadding = _deviceWidth - _targetWidth;
-    
+
     // TODO: implement buildll;
     return Container(
-        width: _targetWidth,
-        margin: EdgeInsets.all(20.0),
-        child:Form(
-          key: formKey,
-          child: ListView(
-            padding: EdgeInsets.symmetric(horizontal: _targetPadding/2),
-            children: <Widget>[
-              this._buildTitleTF(),
-              this._buildPriceTF(),
-              this._buildDescTF(),
-              SizedBox(
-                height: 20.0,
+      width: _targetWidth,
+      margin: EdgeInsets.all(20.0),
+      child: Form(
+        key: formKey,
+        child: ListView(
+          padding: EdgeInsets.symmetric(horizontal: _targetPadding / 2),
+          children: <Widget>[
+            this._buildTitleTF(),
+            this._buildPriceTF(),
+            this._buildDescTF(),
+            SizedBox(
+              height: 20.0,
+            ),
+            RaisedButton(
+              textColor: Colors.white70,
+              child: Text(
+                "Save",
               ),
-              RaisedButton(
-                textColor: Colors.white70,
-                child: Text(
-                  "Save",
-                ),
-                onPressed: this._submitForm,
-              )
-              /*GestureDetector(
+              onPressed: this._submitForm,
+            )
+            /*GestureDetector(
                 onTap: _submitForm,
                 child: Container(
                   color: Colors.green,
@@ -120,7 +137,9 @@ class CreateProductState extends State<CreateProduct> {
                   child: Text("My Button"),
                 )
               )*/
-            ],
-        ),),);
+          ],
+        ),
+      ),
+    );
   }
 }
