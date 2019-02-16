@@ -108,28 +108,32 @@ class CreateProductState extends State<CreateProduct> {
     final double _targetPadding = _deviceWidth - _targetWidth;
 
     // TODO: implement buildll;
-    return Container(
-      width: _targetWidth,
-      margin: EdgeInsets.all(20.0),
-      child: Form(
-        key: formKey,
-        child: ListView(
-          padding: EdgeInsets.symmetric(horizontal: _targetPadding / 2),
-          children: <Widget>[
-            this._buildTitleTF(),
-            this._buildPriceTF(),
-            this._buildDescTF(),
-            SizedBox(
-              height: 20.0,
-            ),
-            RaisedButton(
-              textColor: Colors.white70,
-              child: Text(
-                "Save",
+    return GestureDetector(
+      onTap: () {
+        FocusScope.of(context).requestFocus(FocusNode());
+      },
+      child: Container(
+        width: _targetWidth,
+        margin: EdgeInsets.all(20.0),
+        child: Form(
+          key: formKey,
+          child: ListView(
+            padding: EdgeInsets.symmetric(horizontal: _targetPadding / 2),
+            children: <Widget>[
+              this._buildTitleTF(),
+              this._buildPriceTF(),
+              this._buildDescTF(),
+              SizedBox(
+                height: 20.0,
               ),
-              onPressed: this._submitForm,
-            )
-            /*GestureDetector(
+              RaisedButton(
+                textColor: Colors.white70,
+                child: Text(
+                  "Save",
+                ),
+                onPressed: this._submitForm,
+              )
+              /*GestureDetector(
                 onTap: _submitForm,
                 child: Container(
                   color: Colors.green,
@@ -137,7 +141,8 @@ class CreateProductState extends State<CreateProduct> {
                   child: Text("My Button"),
                 )
               )*/
-          ],
+            ],
+          ),
         ),
       ),
     );
