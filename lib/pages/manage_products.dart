@@ -6,8 +6,9 @@ import './product_list.dart';
 class ManageProductsPage extends StatelessWidget {
   final Function _addProduct;
   final Function _deleteProduct;
+  final List<Map<String, dynamic>> _products;
 
-  ManageProductsPage(this._addProduct, this._deleteProduct);
+  ManageProductsPage(this._addProduct, this._deleteProduct, this._products);
 
   @override
   Widget build(BuildContext context) {
@@ -60,7 +61,7 @@ class ManageProductsPage extends StatelessWidget {
             children: <Widget>[
               //should be equal to the number of tabs ^ length
               CreateProduct(this._addProduct),
-              ListProduct(),
+              ListProduct(this._products),
             ],
           ),
         ));

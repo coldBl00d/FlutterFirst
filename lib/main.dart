@@ -56,7 +56,7 @@ class _MyAppState extends State<MyApp> {
             AuthPage(), //represents home --> either have this or home argument in the material app
         '/products': (BuildContext context) => ProductsPage(this._products),
         '/admin': (BuildContext context) =>
-            ManageProductsPage(this._addProduct, this._deleteProduct),
+            ManageProductsPage(this._addProduct, this._deleteProduct, this._products),
         //'/product':(BuildContext context) => ProductPage()
       },
       onGenerateRoute: (RouteSettings settings) {
