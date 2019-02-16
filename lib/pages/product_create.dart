@@ -16,6 +16,12 @@ class CreateProductState extends State<CreateProduct> {
   String _name;
   double _price;
   String _desc;
+  final Map<String, dynamic> _formData = {
+    'title': null,
+    'price': null,
+    'desc': null,
+    'image': 'assets/food.jpg',
+  };
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
 
   Widget _buildTitleTF() {
@@ -24,7 +30,7 @@ class CreateProductState extends State<CreateProduct> {
         labelText: 'Title',
         //icon: Icon(Icons.edit)
       ),
-      onSaved: (String i) => this._name = i,
+      onSaved: (String i) => this._formData['title'] = i,
       // onChanged: (String i) {
       //   // setState(() {
       //   this._name = i;
@@ -46,8 +52,8 @@ class CreateProductState extends State<CreateProduct> {
         labelText: 'Price',
         //icon: Icon(Icons.edit)
       ),
-      onSaved: (String i) =>
-          this._price = double.parse(i.replaceFirst(RegExp(r','), '.')),
+      onSaved: (String i) => this._formData['price'] =
+          double.parse(i.replaceFirst(RegExp(r','), '.')),
       // onChanged: (String i) {
       //   this._price = double.parse(i);
       // },
@@ -70,7 +76,7 @@ class CreateProductState extends State<CreateProduct> {
       ),
       keyboardType: TextInputType.multiline,
       maxLines: 5,
-      onSaved: (String i) => this._desc = i,
+      onSaved: (String i) => this._formData['desc'] = i,
       validator: (String value) {
         if (value.isEmpty) {
           return "Description is required";
@@ -87,14 +93,7 @@ class CreateProductState extends State<CreateProduct> {
     if (!validated) return;
     formKey.currentState
         .save(); //this will call onsave of all child of the forum.
-    final Map<String, dynamic> product = {
-      'title': this._name,
-      'desc': this._desc,
-      'price': this._price,
-      'image': 'assets/food.jpg'
-    };
-
-    widget._addProduct(product);
+    widget._addProduct(this._formData);
     Navigator.pushReplacementNamed(context, '/products');
 
     //pass data to main dart
