@@ -31,6 +31,11 @@ class CreateProductState extends State<CreateProduct> {
       //   this._name = i;
       //   //});
       // },
+      validator: (String value) {
+        if(value.isEmpty){
+          return "Title is required";
+        }
+      },
     );
   }
 
@@ -61,6 +66,8 @@ class CreateProductState extends State<CreateProduct> {
   }
 
   void _submitForm() {
+    bool validated = formKey.currentState.validate();
+    if(!validated) return;
     formKey.currentState.save(); //this will call onsave of all child of the forum. 
     final Map<String, dynamic> product = {
       'title': this._name,
