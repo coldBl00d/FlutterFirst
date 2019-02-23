@@ -42,33 +42,34 @@ class ProductPage extends StatelessWidget {
   Widget build(BuildContext context) {
     // TODO: implement build
     return WillPopScope(
-        onWillPop: () {
-          print("Back button pressed");
-          Navigator.pop(context, false);
-          return Future.value(false);
-        },
-        child: Scaffold(
-          body: CustomScrollView(
-            slivers: <Widget>[
-              SliverAppBar(
-                expandedHeight: 250,
-                flexibleSpace: FlexibleSpaceBar(
-                    title: TitleDefault(this.title),
-                    background: Image(
-                      image: AssetImage('assets/food.jpg'),
-                      fit: BoxFit.cover,
-                    )),
-                actions: <Widget>[
-                  IconButton(
-                    icon: Icon(Icons.delete),
-                    onPressed: () => _showWarningDialogue(context),
-                  )
-                ],
-                floating: true,
-              ),
-              SliverFixedExtentList(
-                itemExtent: 300,
-                delegate: SliverChildListDelegate([
+      onWillPop: () {
+        print("Back button pressed");
+        Navigator.pop(context, false);
+        return Future.value(false);
+      },
+      child: Scaffold(
+        body: CustomScrollView(
+          slivers: <Widget>[
+            SliverAppBar(
+              expandedHeight: 250,
+              flexibleSpace: FlexibleSpaceBar(
+                  title: TitleDefault(this.title),
+                  background: Image(
+                    image: AssetImage('assets/food.jpg'),
+                    fit: BoxFit.cover,
+                  )),
+              actions: <Widget>[
+                IconButton(
+                  icon: Icon(Icons.delete),
+                  onPressed: () => _showWarningDialogue(context),
+                )
+              ],
+              floating: true,
+            ),
+            SliverFixedExtentList(
+              itemExtent: 300,
+              delegate: SliverChildListDelegate(
+                [
                   Container(
                     padding: EdgeInsets.all(10.0),
                     child: Card(
@@ -86,18 +87,24 @@ class ProductPage extends StatelessWidget {
                           Container(
                             padding: EdgeInsets.all(10),
                             child: Column(
-                              children: <Widget>[Text(this.description == null ? "Nothing here ... ": this.description)],
+                              children: <Widget>[
+                                Text(this.description == null
+                                    ? "Nothing here ... "
+                                    : this.description)
+                              ],
                             ),
                           )
                         ],
                       ),
                     ),
                   )
-                ]),
-              )
-            ],
-          ),
-        ));
+                ],
+              ),
+            )
+          ],
+        ),
+      ),
+    );
   }
 
   /*@override
