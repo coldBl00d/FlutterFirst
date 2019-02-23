@@ -151,6 +151,7 @@ class EditProductState extends State<EditProduct> {
     );
 
     // TODO: implement buildll;
+    //used as a tab previously thus doesnt contain a scaffold
     return widget.product == null
         ? mainContent
         : Scaffold(
