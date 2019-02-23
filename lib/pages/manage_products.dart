@@ -62,7 +62,7 @@ class ManageProductsPage extends StatelessWidget {
             children: <Widget>[
               //should be equal to the number of tabs ^ length
               EditProduct(addProduct: this._addProduct),
-              ListProduct(this._products, this._updateProduct),
+              ListProduct(this._products, this._updateProduct, this._deleteProduct),
             ],
           ),
         ));

@@ -4,8 +4,28 @@ import '../pages/product_edit.dart';
 class ListProduct extends StatelessWidget {
   final List<Map<String, dynamic>> _products;
   final Function _updateProduct;
+  final Function _deleteProduct;
 
-  ListProduct(this._products, this._updateProduct);
+  ListProduct(this._products, this._updateProduct, this._deleteProduct);
+
+  Widget _buildEditButton(BuildContext context, int index) {
+    return IconButton(
+      icon: Icon(Icons.edit),
+      onPressed: () {
+        Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (BuildContext context) {
+              return EditProduct(
+                product: this._products[index],
+                updateProduct: this._updateProduct,
+                index: index,
+              );
+            },
+          ),
+        );
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -14,31 +34,29 @@ class ListProduct extends StatelessWidget {
       padding: EdgeInsets.all(10),
       child: ListView.builder(
         itemBuilder: (BuildContext context, int index) {
-          return Column(
-            children: [
-              ListTile(
-                leading: CircleAvatar(
-                  backgroundImage: AssetImage(this._products[index]['image']),
+          return Dismissible(
+            onDismissed: (DismissDirection direction) {
+              if (direction == DismissDirection.startToEnd) {
+                this._deleteProduct(index);
+              }
+            },
+            key: Key(_products[index]['title']),
+            background: Container(
+              color: Colors.red,
+            ),
+            child: Column(
+              children: [
+                ListTile(
+                  leading: CircleAvatar(
+                    backgroundImage: AssetImage(this._products[index]['image']),
+                  ),
+                  title: Text(this._products[index]['title']),
+                  subtitle: Text('\$${this._products[index]['price']}'),
+                  trailing: this._buildEditButton(context, index),
                 ),
-                title: Text(this._products[index]['title']),
-                subtitle: Text('\$${this._products[index]['price']}'),
-                trailing: IconButton(
-                  icon: Icon(Icons.edit),
-                  onPressed: () {
-                    Navigator.of(context).push(MaterialPageRoute(
-                      builder: (BuildContext context) {
-                        return EditProduct(
-                          product: this._products[index],
-                          updateProduct: this._updateProduct,
-                          index: index,
-                        );
-                      },
-                    ));
-                  },
-                ),
-              ),
-              Divider(),
-            ],
+                Divider(),
+              ],
+            ),
           );
         },
         itemCount: this._products.length,

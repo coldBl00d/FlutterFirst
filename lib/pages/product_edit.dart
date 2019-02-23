@@ -18,8 +18,8 @@ class EditProduct extends StatefulWidget {
 
 class EditProductState extends State<EditProduct> {
   final FocusNode _titleFocusNode = FocusNode();
-  final FocusNode _priceFocusNode =FocusNode();
-  final FocusNode _descFocusNode =FocusNode();
+  final FocusNode _priceFocusNode = FocusNode();
+  final FocusNode _descFocusNode = FocusNode();
   final Map<String, dynamic> _formData = {
     'title': null,
     'price': null,
@@ -124,12 +124,8 @@ class EditProductState extends State<EditProduct> {
     //widget._addProduct()
   }
 
-  @override
-  Widget build(BuildContext context) {
-    final double _deviceWidth = MediaQuery.of(context).size.width;
-    final double _targetWidth = _deviceWidth > 550 ? 500 : _deviceWidth * 0.95;
-    final double _targetPadding = _deviceWidth - _targetWidth;
-    final Widget mainContent = GestureDetector(
+  Widget _buildMainContent(double _targetPadding, double _targetWidth, BuildContext context) {
+    return GestureDetector(
       onTap: () {
         FocusScope.of(context).requestFocus(FocusNode());
       },
@@ -167,6 +163,14 @@ class EditProductState extends State<EditProduct> {
         ),
       ),
     );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final double _deviceWidth = MediaQuery.of(context).size.width;
+    final double _targetWidth = _deviceWidth > 550 ? 500 : _deviceWidth * 0.95;
+    final double _targetPadding = _deviceWidth - _targetWidth;
+    final Widget mainContent = _buildMainContent(_targetPadding, _targetWidth, context);
 
     // TODO: implement buildll;
     //used as a tab previously thus doesnt contain a scaffold
