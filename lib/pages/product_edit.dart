@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import '../widgets/helpers/ensure-visible.dart';
+import '../models/Product.dart';
 
 class EditProduct extends StatefulWidget {
   final Function addProduct;
   final Function updateProduct;
-  final Map<String, dynamic> product;
+  final Product product;
   final int index;
 
   EditProduct({this.addProduct, this.product, this.updateProduct, this.index});
@@ -33,7 +34,7 @@ class EditProductState extends State<EditProduct> {
       focusNode: this._titleFocusNode,
       child: TextFormField(
         focusNode: this._titleFocusNode,
-        initialValue: widget.product != null ? widget.product['title'] : "",
+        initialValue: widget.product != null ? widget.product.title : "",
         decoration: InputDecoration(
           labelText: 'Title',
           //icon: Icon(Icons.edit)
@@ -61,7 +62,7 @@ class EditProductState extends State<EditProduct> {
       child: TextFormField(
         focusNode: _priceFocusNode,
         initialValue:
-            widget.product != null ? widget.product['price'].toString() : "",
+            widget.product != null ? widget.product.price.toString() : "",
         decoration: InputDecoration(
           labelText: 'Price',
           //icon: Icon(Icons.edit)
@@ -89,7 +90,7 @@ class EditProductState extends State<EditProduct> {
       focusNode: _descFocusNode,
       child: TextFormField(
         focusNode: _descFocusNode,
-        initialValue: widget.product != null ? widget.product['desc'] : "",
+        initialValue: widget.product != null ? widget.product.desc: "",
         decoration: InputDecoration(
           labelText: 'Description',
           //icon: Icon(Icons.edit)
@@ -115,9 +116,9 @@ class EditProductState extends State<EditProduct> {
     formKey.currentState
         .save(); //this will call onsave of all child of the forum.
     if (widget.product == null)
-      widget.addProduct(this._formData);
+      widget.addProduct(Product(title: this._formData['title'], price: this._formData['price'], desc: this._formData['desc']));
     else
-      widget.updateProduct(widget.index, _formData);
+      widget.updateProduct(widget.index, Product(title: this._formData['title'], price: this._formData['price'], desc: this._formData['desc']));
     Navigator.pushReplacementNamed(context, '/products');
 
     //pass data to main dart

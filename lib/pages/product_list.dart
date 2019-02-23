@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import '../pages/product_edit.dart';
+import '../models/Product.dart';
 
 class ListProduct extends StatelessWidget {
-  final List<Map<String, dynamic>> _products;
+  final List<Product> _products;
   final Function _updateProduct;
   final Function _deleteProduct;
 
@@ -40,7 +41,7 @@ class ListProduct extends StatelessWidget {
                 this._deleteProduct(index);
               }
             },
-            key: Key(_products[index]['title']),
+            key: Key(_products[index].title),
             background: Container(
               color: Colors.red,
             ),
@@ -48,12 +49,12 @@ class ListProduct extends StatelessWidget {
               children: [
                 ListTile(
                   leading: CircleAvatar(
-                    backgroundImage: AssetImage(this._products[index]['image']),
+                    backgroundImage: AssetImage(this._products[index].image),
                   ),
-                  title: Text(this._products[index]['title']),
-                  subtitle: Text('\$${this._products[index]['price']}'),
+                  title: Text(this._products[index].title),
+                  subtitle: Text('\$${this._products[index].price}'),
                   trailing: this._buildEditButton(context, index),
-                ),
+                 ),
                 Divider(),
               ],
             ),

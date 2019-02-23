@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import './manage_products.dart';
 import '../widgets/my_drawer.dart';
 import '../widgets/products/products.dart';
-
+import '../models/Product.dart';
 
 class ProductsPage extends StatelessWidget {
-  final List<Map<String, dynamic>> _products;
+  final List<Product> _products;
   //final Function _addProduct;
   //final Function _deleteProduct;
 
