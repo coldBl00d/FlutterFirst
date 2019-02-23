@@ -1,18 +1,20 @@
 import 'package:flutter/material.dart';
 
-class CreateProduct extends StatefulWidget {
-  Function _addProduct;
+class EditProduct extends StatefulWidget {
+  final Function addProduct;
+  final Function updateProduct; 
+  final Map<String, dynamic> product; 
 
-  CreateProduct(this._addProduct);
+  EditProduct({this.addProduct, this.product, this.updateProduct});
 
   @override
   State<StatefulWidget> createState() {
     // TODO: implement createState
-    return CreateProductState();
+    return EditProductState();
   }
 }
 
-class CreateProductState extends State<CreateProduct> {
+class EditProductState extends State<EditProduct> {
   String _name;
   double _price;
   String _desc;
@@ -93,7 +95,7 @@ class CreateProductState extends State<CreateProduct> {
     if (!validated) return;
     formKey.currentState
         .save(); //this will call onsave of all child of the forum.
-    widget._addProduct(this._formData);
+    widget.addProduct(this._formData);
     Navigator.pushReplacementNamed(context, '/products');
 
     //pass data to main dart
