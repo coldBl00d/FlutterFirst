@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 
 class EditProduct extends StatefulWidget {
   final Function addProduct;
-  final Function updateProduct; 
-  final Map<String, dynamic> product; 
+  final Function updateProduct;
+  final Map<String, dynamic> product;
 
   EditProduct({this.addProduct, this.product, this.updateProduct});
 
@@ -28,6 +28,7 @@ class EditProductState extends State<EditProduct> {
 
   Widget _buildTitleTF() {
     return TextFormField(
+      initialValue: widget.product != null ? widget.product['title'] : "",
       decoration: InputDecoration(
         labelText: 'Title',
         //icon: Icon(Icons.edit)
@@ -50,6 +51,8 @@ class EditProductState extends State<EditProduct> {
 
   Widget _buildPriceTF() {
     return TextFormField(
+      initialValue:
+          widget.product != null ? widget.product['price'].toString() : "",
       decoration: InputDecoration(
         labelText: 'Price',
         //icon: Icon(Icons.edit)
@@ -72,6 +75,7 @@ class EditProductState extends State<EditProduct> {
 
   Widget _buildDescTF() {
     return TextFormField(
+      initialValue: widget.product != null ? widget.product['desc'] : "",
       decoration: InputDecoration(
         labelText: 'Description',
         //icon: Icon(Icons.edit)
@@ -107,9 +111,7 @@ class EditProductState extends State<EditProduct> {
     final double _deviceWidth = MediaQuery.of(context).size.width;
     final double _targetWidth = _deviceWidth > 550 ? 500 : _deviceWidth * 0.95;
     final double _targetPadding = _deviceWidth - _targetWidth;
-
-    // TODO: implement buildll;
-    return GestureDetector(
+    final Widget mainContent = GestureDetector(
       onTap: () {
         FocusScope.of(context).requestFocus(FocusNode());
       },
@@ -147,5 +149,15 @@ class EditProductState extends State<EditProduct> {
         ),
       ),
     );
+
+    // TODO: implement buildll;
+    return widget.product == null
+        ? mainContent
+        : Scaffold(
+            appBar: AppBar(
+              title: Text("Edit Product"),
+            ),
+            body: mainContent,
+          );
   }
 }
