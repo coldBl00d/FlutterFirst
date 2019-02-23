@@ -39,6 +39,12 @@ class _MyAppState extends State<MyApp> {
     });
   }
 
+  void _updateProduct(int index, Map<String, dynamic> newData){
+    setState(() {
+      this._products[index] = newData;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     // TODO: implement build
@@ -56,7 +62,7 @@ class _MyAppState extends State<MyApp> {
             AuthPage(), //represents home --> either have this or home argument in the material app
         '/products': (BuildContext context) => ProductsPage(this._products),
         '/admin': (BuildContext context) =>
-            ManageProductsPage(this._addProduct, this._deleteProduct, this._products),
+            ManageProductsPage(this._addProduct, this._updateProduct, this._deleteProduct, this._products),
         //'/product':(BuildContext context) => ProductPage()
       },
       onGenerateRoute: (RouteSettings settings) {

@@ -4,8 +4,9 @@ class EditProduct extends StatefulWidget {
   final Function addProduct;
   final Function updateProduct;
   final Map<String, dynamic> product;
+  final int index; 
 
-  EditProduct({this.addProduct, this.product, this.updateProduct});
+  EditProduct({this.addProduct, this.product, this.updateProduct, this.index});
 
   @override
   State<StatefulWidget> createState() {
@@ -99,7 +100,10 @@ class EditProductState extends State<EditProduct> {
     if (!validated) return;
     formKey.currentState
         .save(); //this will call onsave of all child of the forum.
-    widget.addProduct(this._formData);
+    if(widget.product == null)
+      widget.addProduct(this._formData);
+    else 
+      widget.updateProduct(widget.index,_formData);
     Navigator.pushReplacementNamed(context, '/products');
 
     //pass data to main dart
