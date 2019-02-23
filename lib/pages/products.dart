@@ -5,11 +5,11 @@ import '../widgets/products/products.dart';
 import '../models/Product.dart';
 
 class ProductsPage extends StatelessWidget {
-  final List<Product> _products;
+  //final List<Product> _products;
   //final Function _addProduct;
   //final Function _deleteProduct;
 
-  ProductsPage(this._products);
+  //ProductsPage(this._products, this._addProduct, this._deleteProduct );
 
   Drawer _buildSideDrawer(BuildContext context){
     return Drawer(
@@ -51,7 +51,7 @@ class ProductsPage extends StatelessWidget {
           )
         ],
       ),
-      body: Products(this._products),
+      body: Products(),
     );
   }
 }

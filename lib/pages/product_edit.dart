@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import '../widgets/helpers/ensure-visible.dart';
 import '../models/Product.dart';
+import 'package:scoped_model/scoped_model.dart';
+import '../scoped-models/Products.dart';
 
 class EditProduct extends StatefulWidget {
   final Function addProduct;
@@ -90,7 +92,7 @@ class EditProductState extends State<EditProduct> {
       focusNode: _descFocusNode,
       child: TextFormField(
         focusNode: _descFocusNode,
-        initialValue: widget.product != null ? widget.product.desc: "",
+        initialValue: widget.product != null ? widget.product.desc : "",
         decoration: InputDecoration(
           labelText: 'Description',
           //icon: Icon(Icons.edit)
@@ -110,22 +112,45 @@ class EditProductState extends State<EditProduct> {
     //onChanged: (String i) => this._desc = i);
   }
 
-  void _submitForm() {
+  void _submitForm(Function addProduct, Function updateProduct) {
     bool validated = formKey.currentState.validate();
     if (!validated) return;
     formKey.currentState
         .save(); //this will call onsave of all child of the forum.
     if (widget.product == null)
-      widget.addProduct(Product(title: this._formData['title'], price: this._formData['price'], desc: this._formData['desc']));
+      addProduct(Product(
+          title: this._formData['title'],
+          price: this._formData['price'],
+          desc: this._formData['desc']));
     else
-      widget.updateProduct(widget.index, Product(title: this._formData['title'], price: this._formData['price'], desc: this._formData['desc']));
+      updateProduct(
+          widget.index,
+          Product(
+              title: this._formData['title'],
+              price: this._formData['price'],
+              desc: this._formData['desc']));
     Navigator.pushReplacementNamed(context, '/products');
 
     //pass data to main dart
     //widget._addProduct()
   }
 
-  Widget _buildMainContent(double _targetPadding, double _targetWidth, BuildContext context) {
+  Widget _buildSubmitButton() {
+    return ScopedModelDescendant<ProductsModel>(
+      builder: (BuildContext context, Widget child, ProductsModel model) {
+        return RaisedButton(
+          textColor: Colors.white70,
+          child: Text(
+            "Save",
+          ),
+          onPressed: () => this._submitForm(model.addProduct, model.updateProduct),
+        );
+      },
+    );
+  }
+
+  Widget _buildMainContent(
+      double _targetPadding, double _targetWidth, BuildContext context) {
     return GestureDetector(
       onTap: () {
         FocusScope.of(context).requestFocus(FocusNode());
@@ -144,13 +169,7 @@ class EditProductState extends State<EditProduct> {
               SizedBox(
                 height: 20.0,
               ),
-              RaisedButton(
-                textColor: Colors.white70,
-                child: Text(
-                  "Save",
-                ),
-                onPressed: this._submitForm,
-              )
+              _buildSubmitButton(),
               /*GestureDetector(
                 onTap: _submitForm,
                 child: Container(
@@ -171,7 +190,8 @@ class EditProductState extends State<EditProduct> {
     final double _deviceWidth = MediaQuery.of(context).size.width;
     final double _targetWidth = _deviceWidth > 550 ? 500 : _deviceWidth * 0.95;
     final double _targetPadding = _deviceWidth - _targetWidth;
-    final Widget mainContent = _buildMainContent(_targetPadding, _targetWidth, context);
+    final Widget mainContent =
+        _buildMainContent(_targetPadding, _targetWidth, context);
 
     // TODO: implement buildll;
     //used as a tab previously thus doesnt contain a scaffold

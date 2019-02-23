@@ -5,12 +5,12 @@ import './product_list.dart';
 import '../models/Product.dart';
 
 class ManageProductsPage extends StatelessWidget {
-  final Function _addProduct;
-  final Function _deleteProduct;
-  final Function _updateProduct;
-  final List<Product> _products;
+  //final Function _addProduct;
+  //final Function _deleteProduct;
+  //final Function _updateProduct;
+  //final List<Product> _products;
 
-  ManageProductsPage(this._addProduct, this._updateProduct, this._deleteProduct, this._products);
+  //ManageProductsPage(this._addProduct, this._updateProduct, this._deleteProduct, this._products);
 
   @override
   Widget build(BuildContext context) {
@@ -62,8 +62,8 @@ class ManageProductsPage extends StatelessWidget {
           body: TabBarView(
             children: <Widget>[
               //should be equal to the number of tabs ^ length
-              EditProduct(addProduct: this._addProduct),
-              ListProduct(this._products, this._updateProduct, this._deleteProduct),
+              EditProduct(),
+              ListProduct(null, null, null),
             ],
           ),
         ));
