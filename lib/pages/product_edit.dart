@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
+import '../widgets/helpers/ensure-visible.dart';
 
 class EditProduct extends StatefulWidget {
   final Function addProduct;
   final Function updateProduct;
   final Map<String, dynamic> product;
-  final int index; 
+  final int index;
 
   EditProduct({this.addProduct, this.product, this.updateProduct, this.index});
 
@@ -16,9 +17,9 @@ class EditProduct extends StatefulWidget {
 }
 
 class EditProductState extends State<EditProduct> {
-  String _name;
-  double _price;
-  String _desc;
+  final FocusNode _titleFocusNode = FocusNode();
+  final FocusNode _priceFocusNode =FocusNode();
+  final FocusNode _descFocusNode =FocusNode();
   final Map<String, dynamic> _formData = {
     'title': null,
     'price': null,
@@ -28,69 +29,82 @@ class EditProductState extends State<EditProduct> {
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
 
   Widget _buildTitleTF() {
-    return TextFormField(
-      initialValue: widget.product != null ? widget.product['title'] : "",
-      decoration: InputDecoration(
-        labelText: 'Title',
-        //icon: Icon(Icons.edit)
+    return EnsureVisibleWhenFocused(
+      focusNode: this._titleFocusNode,
+      child: TextFormField(
+        focusNode: this._titleFocusNode,
+        initialValue: widget.product != null ? widget.product['title'] : "",
+        decoration: InputDecoration(
+          labelText: 'Title',
+          //icon: Icon(Icons.edit)
+        ),
+        onSaved: (String i) => this._formData['title'] = i,
+        // onChanged: (String i) {
+        //   // setState(() {
+        //   this._name = i;
+        //   //});
+        // },
+        validator: (String value) {
+          if (value.isEmpty) {
+            return "Title is required";
+          } else if (value.length < 5) {
+            return "Value needs to be atleast 5 characters";
+          }
+        },
       ),
-      onSaved: (String i) => this._formData['title'] = i,
-      // onChanged: (String i) {
-      //   // setState(() {
-      //   this._name = i;
-      //   //});
-      // },
-      validator: (String value) {
-        if (value.isEmpty) {
-          return "Title is required";
-        } else if (value.length < 5) {
-          return "Value needs to be atleast 5 characters";
-        }
-      },
     );
   }
 
   Widget _buildPriceTF() {
-    return TextFormField(
-      initialValue:
-          widget.product != null ? widget.product['price'].toString() : "",
-      decoration: InputDecoration(
-        labelText: 'Price',
-        //icon: Icon(Icons.edit)
+    return EnsureVisibleWhenFocused(
+      focusNode: _priceFocusNode,
+      child: TextFormField(
+        focusNode: _priceFocusNode,
+        initialValue:
+            widget.product != null ? widget.product['price'].toString() : "",
+        decoration: InputDecoration(
+          labelText: 'Price',
+          //icon: Icon(Icons.edit)
+        ),
+        onSaved: (String i) => this._formData['price'] =
+            double.parse(i.replaceFirst(RegExp(r','), '.')),
+        // onChanged: (String i) {
+        //   this._price = double.parse(i);
+        // },
+        keyboardType: TextInputType.number,
+        validator: (String value) {
+          if (value.isEmpty) {
+            return "Price is required";
+          } else if (!RegExp(r'^(?:[1-9]\d*|0)?(?:[.,]\d+)?$')
+              .hasMatch(value)) {
+            return "Price needs to be a number";
+          }
+        },
       ),
-      onSaved: (String i) => this._formData['price'] =
-          double.parse(i.replaceFirst(RegExp(r','), '.')),
-      // onChanged: (String i) {
-      //   this._price = double.parse(i);
-      // },
-      keyboardType: TextInputType.number,
-      validator: (String value) {
-        if (value.isEmpty) {
-          return "Price is required";
-        } else if (!RegExp(r'^(?:[1-9]\d*|0)?(?:[.,]\d+)?$').hasMatch(value)) {
-          return "Price needs to be a number";
-        }
-      },
     );
   }
 
   Widget _buildDescTF() {
-    return TextFormField(
-      initialValue: widget.product != null ? widget.product['desc'] : "",
-      decoration: InputDecoration(
-        labelText: 'Description',
-        //icon: Icon(Icons.edit)
+    return EnsureVisibleWhenFocused(
+      focusNode: _descFocusNode,
+      child: TextFormField(
+        focusNode: _descFocusNode,
+        initialValue: widget.product != null ? widget.product['desc'] : "",
+        decoration: InputDecoration(
+          labelText: 'Description',
+          //icon: Icon(Icons.edit)
+        ),
+        keyboardType: TextInputType.multiline,
+        maxLines: 5,
+        onSaved: (String i) => this._formData['desc'] = i,
+        validator: (String value) {
+          if (value.isEmpty) {
+            return "Description is required";
+          } else if (value.length < 10) {
+            return "Description needs to be atleast 10 characters";
+          }
+        },
       ),
-      keyboardType: TextInputType.multiline,
-      maxLines: 5,
-      onSaved: (String i) => this._formData['desc'] = i,
-      validator: (String value) {
-        if (value.isEmpty) {
-          return "Description is required";
-        } else if (value.length < 10) {
-          return "Description needs to be atleast 10 characters";
-        }
-      },
     );
     //onChanged: (String i) => this._desc = i);
   }
@@ -100,10 +114,10 @@ class EditProductState extends State<EditProduct> {
     if (!validated) return;
     formKey.currentState
         .save(); //this will call onsave of all child of the forum.
-    if(widget.product == null)
+    if (widget.product == null)
       widget.addProduct(this._formData);
-    else 
-      widget.updateProduct(widget.index,_formData);
+    else
+      widget.updateProduct(widget.index, _formData);
     Navigator.pushReplacementNamed(context, '/products');
 
     //pass data to main dart
