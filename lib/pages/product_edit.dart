@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import '../widgets/helpers/ensure-visible.dart';
 import '../models/Product.dart';
 import 'package:scoped_model/scoped_model.dart';
-import '../scoped-models/Products.dart';
+import '../scoped-models/main.dart';
 
 class EditProduct extends StatefulWidget {
   @override
@@ -127,8 +127,8 @@ class EditProductState extends State<EditProduct> {
   }
 
   Widget _buildSubmitButton() {
-    return ScopedModelDescendant<ProductsModel>(
-      builder: (BuildContext context, Widget child, ProductsModel model) {
+    return ScopedModelDescendant<MainModel>(
+      builder: (BuildContext context, Widget child, MainModel model) {
         return RaisedButton(
           textColor: Colors.white70,
           child: Text(
@@ -142,7 +142,7 @@ class EditProductState extends State<EditProduct> {
   }
 
   Widget _buildMainContent(double _targetPadding, double _targetWidth,
-      BuildContext context, ProductsModel model) {
+      BuildContext context, MainModel model) {
     return GestureDetector(
       onTap: () {
         FocusScope.of(context).requestFocus(FocusNode());
@@ -185,8 +185,8 @@ class EditProductState extends State<EditProduct> {
 
     // TODO: implement buildll;
     //used as a tab previously thus doesnt contain a scaffold
-    return ScopedModelDescendant<ProductsModel>(
-      builder: (BuildContext context, Widget child, ProductsModel model) {
+    return ScopedModelDescendant<MainModel>(
+      builder: (BuildContext context, Widget child, MainModel model) {
         final Widget mainContent =
             _buildMainContent(_targetPadding, _targetWidth, context, model);
         return model.getSelectedProductIndex() == null

@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
-import '../widgets/my_drawer.dart';
+
 import './product_edit.dart';
 import './product_list.dart';
-import '../models/Product.dart';
+import '../widgets/my_drawer.dart';
+
 
 /*
   Manage product -- Create product and My Product Tabs

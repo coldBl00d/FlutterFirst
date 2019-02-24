@@ -1,7 +1,7 @@
 import 'package:scoped_model/scoped_model.dart';
 import '../models/Product.dart';
 
-class ProductsModel extends Model {
+mixin ProductsModel on Model {
   final List<Product> _products = [];
   int _selectedProductIndex; 
   bool _isFavoriteMode = false;
@@ -77,6 +77,7 @@ class ProductsModel extends Model {
 
   void toggleDisplayMode(){
     this._isFavoriteMode = !this._isFavoriteMode;
+    this._selectedProductIndex = null;
     notifyListeners();
   }
 

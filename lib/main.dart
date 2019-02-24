@@ -7,6 +7,7 @@ import './pages/product.dart';
 import './models/Product.dart';
 import 'package:scoped_model/scoped_model.dart';
 import './scoped-models/Products.dart';
+import './scoped-models/main.dart';
 /*void main() {
   //provided by material file of flutter package
   runApp(MyApp());
@@ -31,8 +32,8 @@ class _MyAppState extends State<MyApp> {
   Widget build(BuildContext context) {
     // TODO: implement build
     //Scaffold create the white page
-    return ScopedModel<ProductsModel>(
-      model: ProductsModel(),
+    return ScopedModel<MainModel>(
+      model: MainModel(),
       child: MaterialApp(
         theme: ThemeData(
             brightness: Brightness.light,

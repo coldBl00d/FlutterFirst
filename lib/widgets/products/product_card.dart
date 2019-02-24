@@ -3,7 +3,7 @@ import './price.dart';
 import '../ui_elements/title_default.dart';
 import '../ui_elements/address_tag.dart';
 import '../../models/Product.dart';
-import '../../scoped-models/Products.dart';
+import '../../scoped-models/main.dart';
 import 'package:scoped_model/scoped_model.dart';
 
 class ProductCard extends StatelessWidget {
@@ -48,8 +48,8 @@ class ProductCard extends StatelessWidget {
       SizedBox(
         width: 5.0,
       ),
-      ScopedModelDescendant<ProductsModel>(
-        builder: (BuildContext context, Widget child, ProductsModel model) {
+      ScopedModelDescendant<MainModel>(
+        builder: (BuildContext context, Widget child, MainModel model) {
           Icon heartIcon = Icon(Icons.favorite_border);
           if(model.getProduct(index).isFavorite)
             heartIcon = Icon(Icons.favorite);

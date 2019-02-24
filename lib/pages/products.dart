@@ -4,7 +4,7 @@ import '../widgets/my_drawer.dart';
 import '../widgets/products/products.dart';
 import '../models/Product.dart';
 import 'package:scoped_model/scoped_model.dart';
-import '../scoped-models/Products.dart';
+import '../scoped-models/main.dart';
 
 class ProductsPage extends StatelessWidget {
   //final List<Product> _products;
@@ -47,8 +47,8 @@ class ProductsPage extends StatelessWidget {
       appBar: AppBar(
         title: Text('Home'),
         actions: <Widget>[
-          ScopedModelDescendant<ProductsModel>(
-            builder: (BuildContext context, Widget child, ProductsModel model) {
+          ScopedModelDescendant<MainModel>(
+            builder: (BuildContext context, Widget child, MainModel model) {
               return IconButton(
                 icon: Icon(model.favoriteMode?Icons.favorite:Icons.favorite_border),
                 onPressed: () {

@@ -1,8 +1,14 @@
 import 'package:flutter/material.dart';
 import '../pages/products.dart';
+import 'package:scoped_model/scoped_model.dart';
+import '../scoped-models/main.dart';
 
 class AuthPage extends StatefulWidget {
-  final Map<String, dynamic> _creds = {'email': null, 'password': null, 'agreed':false};
+  final Map<String, dynamic> _creds = {
+    'email': null,
+    'password': null,
+    'agreed': false
+  };
 
   @override
   State<StatefulWidget> createState() {
@@ -52,7 +58,7 @@ class AuthPageState extends State<AuthPage> {
         bool validated = true;
         validated &= (!password.isEmpty);
         validated &= (password.length > 5);
-        print("Password validation "+validated.toString());
+        print("Password validation " + validated.toString());
         if (!validated) {
           return "Password should be more than 5 characters long";
         }
@@ -80,20 +86,24 @@ class AuthPageState extends State<AuthPage> {
 
   void submit() {
     print(widget._creds['agreed']);
-    if (!this.authKey.currentState.validate() || !(widget._creds['agreed'])) return;
+    if (!this.authKey.currentState.validate() || !(widget._creds['agreed']))
+      return;
     this.authKey.currentState.save();
     print(widget._creds['email']);
     print(widget._creds['password']);
-  
-    
+
     Navigator.pushReplacementNamed(context, '/products');
   }
 
   Widget _buildLoginButton() {
-    return RaisedButton(
-        textColor: Colors.white70,
-        child: Text("Login"),
-        onPressed: this.submit);
+    return ScopedModelDescendant(
+      builder: (BuildContext context, Widget child, MainModel model) {
+        return RaisedButton(
+            textColor: Colors.white70,
+            child: Text("Login"),
+            onPressed: this.submit);
+      },
+    );
   }
 
   Widget generateAuthPage(context) {

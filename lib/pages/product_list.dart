@@ -1,13 +1,13 @@
-import 'package:course/scoped-models/Products.dart';
+import 'package:course/scoped-models/main.dart';
 import 'package:flutter/material.dart';
 import '../pages/product_edit.dart';
-import '../models/Product.dart';
+//import '../models/main.dart';
 import 'package:scoped_model/scoped_model.dart';
 
 class ListProduct extends StatelessWidget {
   Widget _buildEditButton(BuildContext context, int index) {
-    return ScopedModelDescendant<ProductsModel>(
-      builder: (BuildContext context, Widget child, ProductsModel model) {
+    return ScopedModelDescendant<MainModel>(
+      builder: (BuildContext context, Widget child, MainModel model) {
         return IconButton(
           icon: Icon(Icons.edit),
           onPressed: () {
@@ -30,8 +30,8 @@ class ListProduct extends StatelessWidget {
     // TODO: implement buildll;
     return Padding(
       padding: EdgeInsets.all(10),
-      child: ScopedModelDescendant<ProductsModel>(
-          builder: (BuildContext context, Widget child, ProductsModel model) {
+      child: ScopedModelDescendant<MainModel>(
+          builder: (BuildContext context, Widget child, MainModel model) {
         return ListView.builder(
           itemBuilder: (BuildContext context, int index) {
             return Dismissible(

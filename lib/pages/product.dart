@@ -3,7 +3,7 @@ import 'dart:async';
 import '../widgets/products/price.dart';
 import '../widgets/ui_elements/title_default.dart';
 import 'package:scoped_model/scoped_model.dart';
-import '../scoped-models/Products.dart';
+import '../scoped-models/main.dart';
 import '../models/Product.dart';
 
 class ProductPage extends StatelessWidget {
@@ -103,8 +103,8 @@ class ProductPage extends StatelessWidget {
         Navigator.pop(context, false);
         return Future.value(false);
       },
-      child: ScopedModelDescendant<ProductsModel>(
-        builder: (BuildContext context, Widget child, ProductsModel model) {
+      child: ScopedModelDescendant<MainModel>(
+        builder: (BuildContext context, Widget child, MainModel model) {
           return _buildContent(context, model.products, this.productIndex);
         },
       ),
