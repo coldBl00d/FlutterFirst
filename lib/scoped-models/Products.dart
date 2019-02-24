@@ -1,84 +1,88 @@
 import 'package:scoped_model/scoped_model.dart';
 import '../models/Product.dart';
+import 'package:flutter/material.dart';
+import './connected-products.dart';
 
-mixin ProductsModel on Model {
-  final List<Product> _products = [];
-  int _selectedProductIndex; 
+mixin ProductsModel on ConnectedProducts {
   bool _isFavoriteMode = false;
 
-  List<Product> get products {
-    return List.from(_products);
+  List<Product> get allProducts {
+    return List.from(products);
   }
 
   List<Product> get displayedProducts {
-    if(_isFavoriteMode){
-      return List.from(_products.where((Product product) => product.isFavorite).toList());
+    if (_isFavoriteMode) {
+      return List.from(
+          products.where((Product product) => product.isFavorite).toList());
     }
-    return List.from(_products);
+    return List.from(products);
   }
 
   bool get favoriteMode {
     return this._isFavoriteMode;
   }
 
-  void addProduct(Product newProduct) {
-    this._products.add(newProduct);
-    this._selectedProductIndex = null;
-  }
 
   void deleteProduct(int index) {
-    this._products.removeAt(index);
-    this._selectedProductIndex = null;
+    this.products.removeAt(index);
+    this.selectedProductIndex = null;
   }
 
-  void updateProduct(Product newData) {
-    this._products[this._selectedProductIndex] = newData;
-    this._selectedProductIndex = null;
+  void updateProduct({@required String title,@required String desc,
+      @required double price,String image = 'assets/food.jpg',bool isFavorite = false, String userEmail, String userId}) {
+    
+    Product updatedProduct = Product(title: title, desc: desc, price: price, isFavorite: isFavorite, userEmail: this.authenticatedUser.email, userId: this.authenticatedUser.id);
+    this.products[this.selectedProductIndex] = updatedProduct;
+    this.selectedProductIndex = null;
   }
 
-  void selectProduct(int index){
-    assert(index <= this._products.length);
-    assert(index >= 0 );
-    assert(this._products != null);
-    this._selectedProductIndex = index;
+  void selectProduct(int index) {
+    assert(index <= this.products.length);
+    assert(index >= 0);
+    assert(this.products != null);
+    this.selectedProductIndex = index;
   }
 
-  Product getSelectedProduct(){
-    if(this._selectedProductIndex != null){
-      return products[this._selectedProductIndex];
+  Product getSelectedProduct() {
+    if (this.selectedProductIndex != null) {
+      return products[this.selectedProductIndex];
     }
     return null;
   }
 
-  int getProductCount(){
-    return this._products.length;
+  int getProductCount() {
+    return this.products.length;
   }
 
-  int getSelectedProductIndex(){
-    return this._selectedProductIndex;
+  int getSelectedProductIndex() {
+    return this.selectedProductIndex;
   }
 
-  Product getProduct(int index){
-    if(index <= this._products.length){
-      return this._products[index];
-    }else{
+  Product getProduct(int index) {
+    if (index <= this.products.length) {
+      return this.products[index];
+    } else {
       return null;
     }
   }
 
-  void toggleProductFavorite(int index){
+  void toggleProductFavorite(int index) {
     this.selectProduct(index);
     Product selectedProduct = this.getSelectedProduct();
-    bool newIsFavoriteStatus = !(this._products[this._selectedProductIndex].isFavorite);
-    final Product updatedProduct =Product(title: selectedProduct.title, price: selectedProduct.price, desc: selectedProduct.desc, isFavorite: newIsFavoriteStatus );
-    this.updateProduct(updatedProduct);
+    bool newIsFavoriteStatus =
+        !(this.products[this.selectedProductIndex].isFavorite);
+    this.updateProduct(title: selectedProduct.title,
+        price: selectedProduct.price,
+        desc: selectedProduct.desc,
+        userEmail: authenticatedUser.email,
+        userId: authenticatedUser.password,
+        isFavorite: newIsFavoriteStatus);
     notifyListeners();
   }
 
-  void toggleDisplayMode(){
+  void toggleDisplayMode() {
     this._isFavoriteMode = !this._isFavoriteMode;
-    this._selectedProductIndex = null;
+    this.selectedProductIndex = null;
     notifyListeners();
   }
-
 }

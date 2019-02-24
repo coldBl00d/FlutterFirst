@@ -111,15 +111,16 @@ class EditProductState extends State<EditProduct> {
     formKey.currentState
         .save(); //this will call onsave of all child of the forum.
     if (selectedProduct == null)
-      addProduct(Product(
+      addProduct(
           title: this._formData['title'],
           price: this._formData['price'],
-          desc: this._formData['desc']));
+          desc: this._formData['desc'],
+          );
     else
-      updateProduct(Product(
+      updateProduct(
           title: this._formData['title'],
           price: this._formData['price'],
-          desc: this._formData['desc']));
+          desc: this._formData['desc']);
     Navigator.pushReplacementNamed(context, '/products');
 
     //pass data to main dart

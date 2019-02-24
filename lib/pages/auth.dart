@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import '../pages/products.dart';
 import 'package:scoped_model/scoped_model.dart';
+
 import '../scoped-models/main.dart';
 
 class AuthPage extends StatefulWidget {
@@ -84,11 +84,12 @@ class AuthPageState extends State<AuthPage> {
     );
   }
 
-  void submit() {
+  void submit(Function login) {
     print(widget._creds['agreed']);
     if (!this.authKey.currentState.validate() || !(widget._creds['agreed']))
       return;
     this.authKey.currentState.save();
+    login(widget._creds['email'], widget._creds['password']);
     print(widget._creds['email']);
     print(widget._creds['password']);
 
@@ -96,12 +97,13 @@ class AuthPageState extends State<AuthPage> {
   }
 
   Widget _buildLoginButton() {
-    return ScopedModelDescendant(
+    return ScopedModelDescendant<MainModel>(
       builder: (BuildContext context, Widget child, MainModel model) {
         return RaisedButton(
-            textColor: Colors.white70,
-            child: Text("Login"),
-            onPressed: this.submit);
+          textColor: Colors.white70,
+          child: Text("Login"),
+          onPressed: () => this.submit(model.login),
+        );
       },
     );
   }
