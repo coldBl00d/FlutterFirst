@@ -3,6 +3,8 @@ import './price.dart';
 import '../ui_elements/title_default.dart';
 import '../ui_elements/address_tag.dart';
 import '../../models/Product.dart';
+import '../../scoped-models/Products.dart';
+import 'package:scoped_model/scoped_model.dart';
 
 class ProductCard extends StatelessWidget {
   final Product product;
@@ -28,6 +30,7 @@ class ProductCard extends StatelessWidget {
   }
 
   Widget _buildButtons(BuildContext context) {
+
     return ButtonBar(alignment: MainAxisAlignment.center, children: <Widget>[
       IconButton(
         color: Theme.of(context).primaryColor,
@@ -45,10 +48,21 @@ class ProductCard extends StatelessWidget {
       SizedBox(
         width: 5.0,
       ),
-      IconButton(
-        color: Colors.red,
-        icon: Icon(Icons.favorite_border),
-        onPressed: () {},
+      ScopedModelDescendant<ProductsModel>(
+        builder: (BuildContext context, Widget child, ProductsModel model) {
+          Icon heartIcon = Icon(Icons.favorite_border);
+          if(model.getProduct(index).isFavorite)
+            heartIcon = Icon(Icons.favorite);
+          return IconButton(
+            color: Colors.red,
+            icon: heartIcon,
+            onPressed: () {
+               
+              // model.selectProduct(index);
+              model.toggleProductFavorite(index);
+            },
+          );
+        },
       )
     ] //MaterialPageRouter -- needed for animation
         );
