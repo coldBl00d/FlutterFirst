@@ -5,13 +5,6 @@ import 'package:scoped_model/scoped_model.dart';
 import '../scoped-models/Products.dart';
 
 class EditProduct extends StatefulWidget {
-  final Function addProduct;
-  final Function updateProduct;
-  final Product product;
-  final int index;
-
-  EditProduct({this.addProduct, this.product, this.updateProduct, this.index});
-
   @override
   State<StatefulWidget> createState() {
     // TODO: implement createState
@@ -31,12 +24,12 @@ class EditProductState extends State<EditProduct> {
   };
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
 
-  Widget _buildTitleTF() {
+  Widget _buildTitleTF(Product product) {
     return EnsureVisibleWhenFocused(
       focusNode: this._titleFocusNode,
       child: TextFormField(
         focusNode: this._titleFocusNode,
-        initialValue: widget.product != null ? widget.product.title : "",
+        initialValue: product != null ? product.title : "",
         decoration: InputDecoration(
           labelText: 'Title',
           //icon: Icon(Icons.edit)
@@ -58,13 +51,12 @@ class EditProductState extends State<EditProduct> {
     );
   }
 
-  Widget _buildPriceTF() {
+  Widget _buildPriceTF(Product product) {
     return EnsureVisibleWhenFocused(
       focusNode: _priceFocusNode,
       child: TextFormField(
         focusNode: _priceFocusNode,
-        initialValue:
-            widget.product != null ? widget.product.price.toString() : "",
+        initialValue: product != null ? product.price.toString() : "",
         decoration: InputDecoration(
           labelText: 'Price',
           //icon: Icon(Icons.edit)
@@ -87,12 +79,12 @@ class EditProductState extends State<EditProduct> {
     );
   }
 
-  Widget _buildDescTF() {
+  Widget _buildDescTF(Product product) {
     return EnsureVisibleWhenFocused(
       focusNode: _descFocusNode,
       child: TextFormField(
         focusNode: _descFocusNode,
-        initialValue: widget.product != null ? widget.product.desc : "",
+        initialValue: product != null ? product.desc : "",
         decoration: InputDecoration(
           labelText: 'Description',
           //icon: Icon(Icons.edit)
@@ -112,23 +104,22 @@ class EditProductState extends State<EditProduct> {
     //onChanged: (String i) => this._desc = i);
   }
 
-  void _submitForm(Function addProduct, Function updateProduct) {
+  void _submitForm(
+      Function addProduct, Function updateProduct, Product selectedProduct) {
     bool validated = formKey.currentState.validate();
     if (!validated) return;
     formKey.currentState
         .save(); //this will call onsave of all child of the forum.
-    if (widget.product == null)
+    if (selectedProduct == null)
       addProduct(Product(
           title: this._formData['title'],
           price: this._formData['price'],
           desc: this._formData['desc']));
     else
-      updateProduct(
-          widget.index,
-          Product(
-              title: this._formData['title'],
-              price: this._formData['price'],
-              desc: this._formData['desc']));
+      updateProduct(Product(
+          title: this._formData['title'],
+          price: this._formData['price'],
+          desc: this._formData['desc']));
     Navigator.pushReplacementNamed(context, '/products');
 
     //pass data to main dart
@@ -143,14 +134,15 @@ class EditProductState extends State<EditProduct> {
           child: Text(
             "Save",
           ),
-          onPressed: () => this._submitForm(model.addProduct, model.updateProduct),
+          onPressed: () => this._submitForm(model.addProduct,
+              model.updateProduct, model.getSelectedProduct()),
         );
       },
     );
   }
 
-  Widget _buildMainContent(
-      double _targetPadding, double _targetWidth, BuildContext context) {
+  Widget _buildMainContent(double _targetPadding, double _targetWidth,
+      BuildContext context, ProductsModel model) {
     return GestureDetector(
       onTap: () {
         FocusScope.of(context).requestFocus(FocusNode());
@@ -163,9 +155,9 @@ class EditProductState extends State<EditProduct> {
           child: ListView(
             padding: EdgeInsets.symmetric(horizontal: _targetPadding / 2),
             children: <Widget>[
-              this._buildTitleTF(),
-              this._buildPriceTF(),
-              this._buildDescTF(),
+              this._buildTitleTF(model.getSelectedProduct()),
+              this._buildPriceTF(model.getSelectedProduct()),
+              this._buildDescTF(model.getSelectedProduct()),
               SizedBox(
                 height: 20.0,
               ),
@@ -190,18 +182,22 @@ class EditProductState extends State<EditProduct> {
     final double _deviceWidth = MediaQuery.of(context).size.width;
     final double _targetWidth = _deviceWidth > 550 ? 500 : _deviceWidth * 0.95;
     final double _targetPadding = _deviceWidth - _targetWidth;
-    final Widget mainContent =
-        _buildMainContent(_targetPadding, _targetWidth, context);
 
     // TODO: implement buildll;
     //used as a tab previously thus doesnt contain a scaffold
-    return widget.product == null
-        ? mainContent
-        : Scaffold(
-            appBar: AppBar(
-              title: Text("Edit Product"),
-            ),
-            body: mainContent,
-          );
+    return ScopedModelDescendant<ProductsModel>(
+      builder: (BuildContext context, Widget child, ProductsModel model) {
+        final Widget mainContent =
+            _buildMainContent(_targetPadding, _targetWidth, context, model);
+        return model.getSelectedProductIndex() == null
+            ? mainContent
+            : Scaffold(
+                appBar: AppBar(
+                  title: Text("Edit Product"),
+                ),
+                body: mainContent,
+              );
+      },
+    );
   }
 }

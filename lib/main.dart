@@ -58,7 +58,7 @@ class _MyAppState extends State<MyApp> {
             final int index = int.parse(pathElement[2]);
             return MaterialPageRoute<bool>(
               builder: (BuildContext context) {
-                return ProductPage();
+                return ProductPage(index);
               },
             );
           }
