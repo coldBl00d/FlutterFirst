@@ -7,7 +7,7 @@ class AuthPage extends StatefulWidget {
   final Map<String, dynamic> _creds = {
     'email': null,
     'password': null,
-    'agreed': false
+    'agreed': true
   };
 
   @override
@@ -30,6 +30,7 @@ class AuthPageState extends State<AuthPage> {
 
   Widget _buildEmailTF() {
     return TextFormField(
+      initialValue: 'akhil@ork.com',
       keyboardType: TextInputType.emailAddress,
       validator: (String email) {
         bool validated = true;
@@ -51,6 +52,7 @@ class AuthPageState extends State<AuthPage> {
 
   Widget _buildPasswordTF() {
     return TextFormField(
+      initialValue: 'jdjdjdjdjdjdjdjdjdj',
       onSaved: (String i) {
         widget._creds['password'] = i;
       },

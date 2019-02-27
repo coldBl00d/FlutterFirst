@@ -6,7 +6,7 @@ import './pages/products.dart';
 import './pages/product.dart';
 import './models/Product.dart';
 import 'package:scoped_model/scoped_model.dart';
-import './scoped-models/Products.dart';
+
 import './scoped-models/main.dart';
 /*void main() {
   //provided by material file of flutter package

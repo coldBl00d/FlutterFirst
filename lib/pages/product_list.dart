@@ -18,7 +18,7 @@ class ListProduct extends StatelessWidget {
                   return EditProduct();
                 },
               ),
-            );
+            ).then((_) => model.setSelectedIndex(null));
           },
         );
       },

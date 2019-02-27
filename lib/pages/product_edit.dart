@@ -105,7 +105,7 @@ class EditProductState extends State<EditProduct> {
   }
 
   void _submitForm(
-      Function addProduct, Function updateProduct, Product selectedProduct) {
+      Function addProduct, Function updateProduct, Product selectedProduct, Function setSelectedProduct) {
     bool validated = formKey.currentState.validate();
     if (!validated) return;
     formKey.currentState
@@ -121,7 +121,8 @@ class EditProductState extends State<EditProduct> {
           title: this._formData['title'],
           price: this._formData['price'],
           desc: this._formData['desc']);
-    Navigator.pushReplacementNamed(context, '/products');
+
+    Navigator.pushReplacementNamed(context, '/products').then((_) => setSelectedProduct(null) );
 
     //pass data to main dart
     //widget._addProduct()
@@ -136,7 +137,7 @@ class EditProductState extends State<EditProduct> {
             "Save",
           ),
           onPressed: () => this._submitForm(model.addProduct,
-              model.updateProduct, model.getSelectedProduct()),
+              model.updateProduct, model.getSelectedProduct(), model.setSelectedIndex),
         );
       },
     );

@@ -105,7 +105,7 @@ class ProductPage extends StatelessWidget {
       },
       child: ScopedModelDescendant<MainModel>(
         builder: (BuildContext context, Widget child, MainModel model) {
-          return _buildContent(context, model.products, this.productIndex);
+          return _buildContent(context, model.displayedProducts, this.productIndex);
         },
       ),
     );
