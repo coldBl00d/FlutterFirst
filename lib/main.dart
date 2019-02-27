@@ -32,8 +32,9 @@ class _MyAppState extends State<MyApp> {
   Widget build(BuildContext context) {
     // TODO: implement build
     //Scaffold create the white page
+    final MainModel _mainModel =MainModel(); 
     return ScopedModel<MainModel>(
-      model: MainModel(),
+      model: _mainModel,
       child: MaterialApp(
         theme: ThemeData(
             brightness: Brightness.light,
@@ -44,7 +45,7 @@ class _MyAppState extends State<MyApp> {
         routes: {
           '/': (BuildContext context) =>
               AuthPage(), //represents home --> either have this or home argument in the material app
-          '/products': (BuildContext context) => ProductsPage(),
+          '/products': (BuildContext context) => ProductsPage(_mainModel),
           '/admin': (BuildContext context) => ManageProductsPage(),
           // '/product':(BuildContext context) => ProductPage()
         },
@@ -67,7 +68,7 @@ class _MyAppState extends State<MyApp> {
 
         onUnknownRoute: (RouteSettings settings) {
           return MaterialPageRoute(builder: (BuildContext context) {
-            return ProductsPage();
+            return ProductsPage(_mainModel);
           });
         },
       ),

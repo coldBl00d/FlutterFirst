@@ -6,13 +6,32 @@ import '../models/Product.dart';
 import 'package:scoped_model/scoped_model.dart';
 import '../scoped-models/main.dart';
 
-class ProductsPage extends StatelessWidget {
+class ProductsPage extends StatefulWidget {
   //final List<Product> _products;
   //final Function _addProduct;
   //final Function _deleteProduct;
 
   //ProductsPage(this._products, this._addProduct, this._deleteProduct );
 
+  final MainModel _model; 
+
+  ProductsPage(this._model);
+
+  @override
+  State<StatefulWidget> createState() {
+    // TODO: implement createState
+    return ProductsPageState();
+  }
+}
+
+class ProductsPageState extends State<ProductsPage>{
+
+  @override
+  initState(){
+    super.initState();
+    widget._model.fetchProducts();
+  }
+  
   Drawer _buildSideDrawer(BuildContext context) {
     return Drawer(
       //child: MyDrawer()

@@ -7,6 +7,7 @@ class Product {
   final bool isFavorite;
   final String userEmail; 
   final String userId;
+  final String id;
 
-  Product({@required this.title, @required this.desc, @required this.price, this.isFavorite = false, this.image='assets/food.jpg', @required this.userId, @required this.userEmail});
+  Product({@required this.id,@required this.title, @required this.desc, @required this.price, this.isFavorite = false, this.image='assets/food.jpg', @required this.userId, @required this.userEmail});
 }

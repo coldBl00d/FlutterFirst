@@ -2,24 +2,54 @@ import 'package:course/models/Product.dart';
 import 'package:course/models/user.dart';
 import 'package:flutter/material.dart';
 import 'package:scoped_model/scoped_model.dart';
- 
+import 'package:http/http.dart' as http;
+import 'dart:convert' as convert;
 
 mixin ConnectedProductsModel on Model {
-
   final List<Product> _products = [];
-  User _authenticatedUser; 
+  User _authenticatedUser;
   int _selectedProductIndex;
+  final String _firebaseUrl = 'https://flutter-products-69c0b.firebaseio.com';
 
-   void addProduct({@required String title,@required String desc,
-      @required double price,String image = 'assets/food.jpg',bool isFavorite = false}) {
+  void addProduct(
+      {@required String title,
+      @required String desc,
+      @required double price,
+      String image = 'assets/food.jpg',
+      bool isFavorite = false}) {
+    final Map<String, dynamic> productData = {
+      'title': title,
+      'desc': desc,
+      'price': price,
+      'image': 'https://moneyinc.com/wp-content/uploads/2017/07/Chocolate.jpg',
+    };
 
-    
-    Product newProduct = Product(title: title, desc: desc, price: price, isFavorite: isFavorite, userEmail: this._authenticatedUser.email, userId: this._authenticatedUser.id);
-    this._products.add(newProduct);
-    this._selectedProductIndex = null;
+    http
+        .post(
+      this._firebaseUrl+'/products.json',
+      body: convert.json.encode(productData),
+    )
+        .then(
+      (http.Response res) {
+        if (res.statusCode == 200) {
+          Map<String, dynamic> resBody = convert.json.decode(res.body);
+          Product newProduct = Product(
+              id: resBody['name'],
+              title: title,
+              desc: desc,
+              price: price,
+              isFavorite: isFavorite,
+              userEmail: this._authenticatedUser.email,
+              userId: this._authenticatedUser.id);
+
+          this._products.add(newProduct);
+          this._selectedProductIndex = null;
+          notifyListeners();
+        }
+      },
+    );
   }
-
-} 
+}
 
 mixin ProductsModel on ConnectedProductsModel {
   bool _isFavoriteMode = false;
@@ -40,7 +70,7 @@ mixin ProductsModel on ConnectedProductsModel {
     return this._isFavoriteMode;
   }
 
-  void setSelectedIndex(int index){
+  void setSelectedIndex(int index) {
     this._selectedProductIndex = index;
     print("Product selection cleared");
   }
@@ -50,10 +80,21 @@ mixin ProductsModel on ConnectedProductsModel {
     this._selectedProductIndex = null;
   }
 
-  void updateProduct({@required String title,@required String desc,
-      @required double price,String image = 'assets/food.jpg',bool isFavorite = false, String userEmail, String userId}) {
-    
-    Product updatedProduct = Product(title: title, desc: desc, price: price, isFavorite: isFavorite, userEmail: this._authenticatedUser.email, userId: this._authenticatedUser.id);
+  void updateProduct(
+      {@required String title,
+      @required String desc,
+      @required double price,
+      String image = 'assets/food.jpg',
+      bool isFavorite = false,
+      String userEmail,
+      String userId}) {
+    Product updatedProduct = Product(
+        title: title,
+        desc: desc,
+        price: price,
+        isFavorite: isFavorite,
+        userEmail: this._authenticatedUser.email,
+        userId: this._authenticatedUser.id);
     this._products[this._selectedProductIndex] = updatedProduct;
     //this._selectedProductIndex = null;
   }
@@ -93,7 +134,8 @@ mixin ProductsModel on ConnectedProductsModel {
     Product selectedProduct = this.getSelectedProduct();
     bool newIsFavoriteStatus =
         !(this._products[this._selectedProductIndex].isFavorite);
-    this.updateProduct(title: selectedProduct.title,
+    this.updateProduct(
+        title: selectedProduct.title,
         price: selectedProduct.price,
         desc: selectedProduct.desc,
         userEmail: _authenticatedUser.email,
@@ -107,12 +149,16 @@ mixin ProductsModel on ConnectedProductsModel {
     this._selectedProductIndex = null;
     notifyListeners();
   }
+
+  void fetchProducts(){
+    http.get(_firebaseUrl+'/products.json').then((http.Response res){
+      print(convert.json.decode(res.body).toString());
+    },);
+  }
 }
 
 mixin UserModel on ConnectedProductsModel {
-
-  void login(String email, String password){
+  void login(String email, String password) {
     _authenticatedUser = User('jdifhendlci', email, password);
   }
-
 }
