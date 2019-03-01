@@ -40,9 +40,10 @@ class ProductPage extends StatelessWidget {
       body: CustomScrollView(
         slivers: <Widget>[
           SliverAppBar(
-            expandedHeight: 250,
+            expandedHeight: MediaQuery.of(context).size.height * 0.40,
+            pinned: true,
             flexibleSpace: FlexibleSpaceBar(
-              title: TitleDefault(products[index].title),
+              //title: TitleDefault(products[index].title),
               background: Image(
                 image: AssetImage('assets/food.jpg'),
                 fit: BoxFit.cover,
@@ -54,38 +55,95 @@ class ProductPage extends StatelessWidget {
                 onPressed: () => _showWarningDialogue(context),
               ),
             ],
-            floating: true,
+            //floating: true,
           ),
           SliverFixedExtentList(
-            itemExtent: 300,
+            itemExtent: MediaQuery.of(context).size.height * 0.60,
             delegate: SliverChildListDelegate(
               [
                 Container(
-                  padding: EdgeInsets.all(10.0),
-                  child: Card(
-                    child: Column(
-                      children: <Widget>[
-                        Container(
-                          padding: EdgeInsets.only(top: 10.0, right: 20.0),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.end,
-                            children: <Widget>[
-                              PriceTag(products[index].price.toString()),
-                            ],
+                  color: Colors.grey.shade200,
+                  alignment: Alignment(-1, -1),
+                  padding: EdgeInsets.all(10),
+                  margin: EdgeInsets.only(bottom: 10),
+                  child: Column(
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: <Widget>[
+                          Text(
+                            'Chocolate', //products[index].title,
+                            style: TextStyle(
+                              fontSize: 26.0,
+                              fontWeight: FontWeight.bold,
+                              fontFamily: 'Oswald',
+                            ),
                           ),
-                        ),
-                        Container(
-                          padding: EdgeInsets.all(10),
-                          child: Column(
-                            children: <Widget>[
-                              Text(products[index].desc == null? "Nothing here ... ": products[index].desc),
-                            ],
+                          Card(
+                            shape: CircleBorder(),
+                            child: IconButton(
+                              icon: Icon(Icons.favorite_border),
+                              color: Theme.of(context).accentColor,
+                              onPressed: () {},
+                            ),
+                          )
+                        ],
+                      ),
+                      SizedBox(
+                        height: 5,
+                      ),
+                      Row(
+                        children: <Widget>[
+                          Container(
+                            // decoration: BoxDecoration(
+                            //   borderRadius:
+                            //       BorderRadius.all(Radius.circular(10)),
+                            //   border: Border.all(
+                            //       color: Theme.of(context).accentColor,
+                            //       width: 2),
+                            //   shape: BoxShape.rectangle,
+                            // ),
+                            // padding: EdgeInsets.symmetric(
+                            //     vertical: 5, horizontal: 10),
+                            child: Text(
+                              '\$20.0', //products[index].title,
+                              style: TextStyle(
+                                  fontSize: 20.0, color: Colors.grey.shade900),
+                            ),
                           ),
-                        )
-                      ],
-                    ),
+                        ],
+                      ),
+                      SizedBox(
+                        height: 60,
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
+                          Expanded(
+                            child: Card(
+                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                              child: Container(
+                                height: 200,
+                                padding: EdgeInsets.all(10),
+                                child: Column(
+                                  children: <Widget>[
+                                    Container(
+                                      child: Row(
+                                        children: [
+                                          Text("Hello world"),
+                                        ],
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          )
+                        ],
+                      )
+                    ],
                   ),
-                )
+                ),
               ],
             ),
           ),
@@ -93,6 +151,35 @@ class ProductPage extends StatelessWidget {
       ),
     );
   }
+
+  // Container(
+  //                 padding: EdgeInsets.all(10.0),
+  //                 child: Card(
+  //                   child: Column(
+  //                     children: <Widget>[
+  //                       Container(
+  //                         padding: EdgeInsets.only(top: 10.0, right: 20.0),
+  //                         child: Row(
+  //                           mainAxisAlignment: MainAxisAlignment.end,
+  //                           children: <Widget>[
+  //                             PriceTag(products[index].price.toString()),
+  //                           ],
+  //                         ),
+  //                       ),
+  //                       Container(
+  //                         padding: EdgeInsets.all(10),
+  //                         child: Column(
+  //                           children: <Widget>[
+  //                             Text(products[index].desc == null
+  //                                 ? "Nothing here ... "
+  //                                 : products[index].desc),
+  //                           ],
+  //                         ),
+  //                       )
+  //                     ],
+  //                   ),
+  //                 ),
+  //               )
 
   @override
   Widget build(BuildContext context) {
@@ -105,7 +192,8 @@ class ProductPage extends StatelessWidget {
       },
       child: ScopedModelDescendant<MainModel>(
         builder: (BuildContext context, Widget child, MainModel model) {
-          return _buildContent(context, model.displayedProducts, this.productIndex);
+          return _buildContent(
+              context, model.displayedProducts, this.productIndex);
         },
       ),
     );

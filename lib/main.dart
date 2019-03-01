@@ -37,7 +37,7 @@ class _MyAppState extends State<MyApp> {
       model: _mainModel,
       child: MaterialApp(
         theme: ThemeData(
-            brightness: Brightness.light,
+            //brightness: Brightness.light,
             primarySwatch: Colors.deepPurple,
             accentColor: Colors.pinkAccent,
             buttonColor: Colors.pinkAccent),
