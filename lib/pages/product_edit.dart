@@ -104,25 +104,30 @@ class EditProductState extends State<EditProduct> {
     //onChanged: (String i) => this._desc = i);
   }
 
-  void _submitForm(
-      Function addProduct, Function updateProduct, Product selectedProduct, Function setSelectedProduct) {
+  void _submitForm(Function addProduct, Function updateProduct,Product selectedProduct, Function setSelectedProduct) {
     bool validated = formKey.currentState.validate();
     if (!validated) return;
     formKey.currentState
         .save(); //this will call onsave of all child of the forum.
     if (selectedProduct == null)
       addProduct(
-          title: this._formData['title'],
-          price: this._formData['price'],
-          desc: this._formData['desc'],
-          );
+        title: this._formData['title'],
+        price: this._formData['price'],
+        desc: this._formData['desc'],
+      ).then(
+        (_) {
+          Navigator.pushReplacementNamed(context, '/products')
+              .then((_) => setSelectedProduct(null));
+        },
+      );
     else
       updateProduct(
           title: this._formData['title'],
           price: this._formData['price'],
           desc: this._formData['desc']);
 
-    Navigator.pushReplacementNamed(context, '/products').then((_) => setSelectedProduct(null) );
+    //Navigator.pushReplacementNamed(context, '/products')
+     //   .then((_) => setSelectedProduct(null));
 
     //pass data to main dart
     //widget._addProduct()
@@ -131,14 +136,23 @@ class EditProductState extends State<EditProduct> {
   Widget _buildSubmitButton() {
     return ScopedModelDescendant<MainModel>(
       builder: (BuildContext context, Widget child, MainModel model) {
-        return RaisedButton(
-          textColor: Colors.white70,
-          child: Text(
-            "Save",
-          ),
-          onPressed: () => this._submitForm(model.addProduct,
-              model.updateProduct, model.getSelectedProduct(), model.setSelectedIndex),
-        );
+        if (model.isLoading) {
+          return Center(
+            child: CircularProgressIndicator(),
+          );
+        } else {
+          return RaisedButton(
+            textColor: Colors.white70,
+            child: Text(
+              "Save",
+            ),
+            onPressed: () => this._submitForm(
+                model.addProduct,
+                model.updateProduct,
+                model.getSelectedProduct(),
+                model.setSelectedIndex),
+          );
+        }
       },
     );
   }

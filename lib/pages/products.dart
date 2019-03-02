@@ -58,6 +58,15 @@ class ProductsPageState extends State<ProductsPage>{
     );
   }
 
+  Widget _buildSpinner(){
+    return Center(
+      child: CircularProgressIndicator(
+        value: null, 
+        backgroundColor: Colors.blue,
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     // TODO: implement build
@@ -78,7 +87,15 @@ class ProductsPageState extends State<ProductsPage>{
           ),
         ],
       ),
-      body: Products(),
+      body: ScopedModelDescendant<MainModel>(
+        builder: (BuildContext context, Widget child, MainModel model){
+          if(model.isLoading){
+            return _buildSpinner();
+          }else{
+            return Products();
+          }
+        },
+      )
     );
   }
 }

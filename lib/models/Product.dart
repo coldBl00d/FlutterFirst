@@ -9,5 +9,5 @@ class Product {
   final String userId;
   final String id;
 
-  Product({@required this.id,@required this.title, @required this.desc, @required this.price, this.isFavorite = false, this.image='assets/food.jpg', @required this.userId, @required this.userEmail});
+  Product({@required this.id,@required this.title, @required this.desc, @required this.price, this.isFavorite = false, this.image, @required this.userId, @required this.userEmail});
 }

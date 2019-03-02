@@ -10,28 +10,36 @@ mixin ConnectedProductsModel on Model {
   User _authenticatedUser;
   int _selectedProductIndex;
   final String _firebaseUrl = 'https://flutter-products-69c0b.firebaseio.com';
+  bool _isLoading = false;
 
-  void addProduct(
+  bool get isLoading => _isLoading;
+
+  Future<Null> addProduct(
       {@required String title,
       @required String desc,
       @required double price,
-      String image = 'assets/food.jpg',
+      String image = 'https://moneyinc.com/wp-content/uploads/2017/07/Chocolate.jpg',
       bool isFavorite = false}) {
+    _isLoading = true;
+    notifyListeners();
     final Map<String, dynamic> productData = {
       'title': title,
       'desc': desc,
       'price': price,
       'image': 'https://moneyinc.com/wp-content/uploads/2017/07/Chocolate.jpg',
+      'userEmail': this._authenticatedUser.email,
+      'userId': this._authenticatedUser.id
     };
 
-    http
+    return http
         .post(
-      this._firebaseUrl+'/products.json',
+      this._firebaseUrl + '/products.json',
       body: convert.json.encode(productData),
     )
         .then(
       (http.Response res) {
         if (res.statusCode == 200) {
+          _isLoading = false;
           Map<String, dynamic> resBody = convert.json.decode(res.body);
           Product newProduct = Product(
               id: resBody['name'],
@@ -40,10 +48,12 @@ mixin ConnectedProductsModel on Model {
               price: price,
               isFavorite: isFavorite,
               userEmail: this._authenticatedUser.email,
-              userId: this._authenticatedUser.id);
+              userId: this._authenticatedUser.id,
+              image:image);
 
           this._products.add(newProduct);
           this._selectedProductIndex = null;
+          _isLoading = false;
           notifyListeners();
         }
       },
@@ -140,7 +150,8 @@ mixin ProductsModel on ConnectedProductsModel {
         desc: selectedProduct.desc,
         userEmail: _authenticatedUser.email,
         userId: _authenticatedUser.password,
-        isFavorite: newIsFavoriteStatus);
+        isFavorite: newIsFavoriteStatus, 
+        image: selectedProduct.image);
     notifyListeners();
   }
 
@@ -150,10 +161,34 @@ mixin ProductsModel on ConnectedProductsModel {
     notifyListeners();
   }
 
-  void fetchProducts(){
-    http.get(_firebaseUrl+'/products.json').then((http.Response res){
-      print(convert.json.decode(res.body).toString());
-    },);
+  void fetchProducts() {
+    _isLoading = true;
+    notifyListeners();
+    _products.clear();
+    http.get(_firebaseUrl + '/products.json').then(
+      (http.Response res) {
+        print(convert.json.decode(res.body).toString());
+        Map<String, dynamic> bodyMap = convert.json.decode(res.body);
+        if (bodyMap != null) {
+          bodyMap.forEach(
+            (String key, dynamic product) {
+              Product p = Product(
+                id: key,
+                title: product['title'],
+                desc: product['desc'],
+                price: product['price'],
+                userEmail: product['userEmail'],
+                userId: product['userId'],
+                image: product['image'],
+              );
+              _products.add(p);
+            },
+          );
+        }
+        _isLoading = false;
+        notifyListeners();
+      },
+    );
   }
 }
 

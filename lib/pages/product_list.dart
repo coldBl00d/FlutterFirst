@@ -49,7 +49,7 @@ class ListProduct extends StatelessWidget {
                   ListTile(
                     leading: CircleAvatar(
                       backgroundImage:
-                          AssetImage(model.getProduct(index).image),
+                          NetworkImage(model.getProduct(index).image),
                     ),
                     title: Text(model.getProduct(index).title),
                     subtitle: Text('\$${model.getProduct(index).price}'),
