@@ -19,7 +19,7 @@ mixin ConnectedProductsModel on Model {
     return _selectedProductId;
   }
 
-  Future<Null> addProduct(
+  Future<bool> addProduct(
       {@required String title,
       @required String desc,
       @required double price,
@@ -49,7 +49,7 @@ mixin ConnectedProductsModel on Model {
     )
         .then(
       (http.Response res) {
-        if (res.statusCode == 200) {
+        if (res.statusCode == 200 || res.statusCode == 201) {
           _isLoading = false;
           Map<String, dynamic> resBody = convert.json.decode(res.body);
           Product newProduct = Product(
@@ -70,9 +70,19 @@ mixin ConnectedProductsModel on Model {
           this._selectedProductId = null;
           _isLoading = false;
           notifyListeners();
+          return true;
+        }else{
+          // * Not successfull 
+          _isLoading = false;
+          notifyListeners();
+          return false;
         }
       },
-    );
+    ).catchError((error){
+      _isLoading = false;
+      notifyListeners();
+      return false;
+    });
   }
 }
 
@@ -103,7 +113,7 @@ mixin ProductsModel on ConnectedProductsModel {
       debugPrint("Clearing product selection");
   }
 
-  Future<Null> deleteProduct({String id, int index}) {
+  Future<bool> deleteProduct({String id, int index}) {
     print("Delete Product " + id);
 
     return http
@@ -120,11 +130,16 @@ mixin ProductsModel on ConnectedProductsModel {
         }
         _selectedProductId = null;
         notifyListeners();
+        return true;
       }
+    }).catchError((error){
+      _isLoading = false;
+      notifyListeners();
+      return false;
     });
   }
 
-  Future<Null> updateProduct(
+  Future<bool> updateProduct(
       {@required String title,
       @required String desc,
       @required double price,
@@ -186,6 +201,10 @@ mixin ProductsModel on ConnectedProductsModel {
         this.setSelectedProductId(null);
       }
       notifyListeners();
+    }).catchError((error){
+      _isLoading = false;
+      notifyListeners();
+      return false;
     });
     //this._selectedProductIndex = null;
   }
@@ -282,7 +301,11 @@ mixin ProductsModel on ConnectedProductsModel {
         _isLoading = false;
         notifyListeners();
       },
-    );
+    )..catchError((error){
+      _isLoading = false;
+      notifyListeners();
+      return null;
+    });
   }
 }
 

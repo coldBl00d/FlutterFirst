@@ -116,9 +116,27 @@ class EditProductState extends State<EditProduct> {
         price: this._formData['price'],
         desc: this._formData['desc'],
       ).then(
-        (_) {
-          Navigator.pushReplacementNamed(context, '/products')
-              .then((_) => setSelectedProduct(null));
+        (bool success) {
+          if (success) {
+            Navigator.pushReplacementNamed(context, '/products')
+                .then((_) => setSelectedProduct(null));
+          } else {
+            showDialog(
+              //! Context is always stored in the state as a property which can be accessed anywhere within the state
+                context: context,
+                builder: (BuildContext context) {
+                  return AlertDialog(
+                    title: Text("Something went wrong"),
+                    content: Text("Please try again"),
+                    actions: <Widget>[
+                      FlatButton(
+                        child: Text("Okay"),
+                        onPressed: () => Navigator.of(context).pop(),
+                      )
+                    ],
+                  );
+                });
+          }
         },
       );
     else
@@ -126,7 +144,7 @@ class EditProductState extends State<EditProduct> {
               title: this._formData['title'],
               price: this._formData['price'],
               desc: this._formData['desc'],
-              unsetSelectedAfterUpdate : false)
+              unsetSelectedAfterUpdate: false)
           .then(
         (_) {
           Navigator.pushReplacementNamed(context, '/products')
