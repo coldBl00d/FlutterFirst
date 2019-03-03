@@ -10,7 +10,24 @@ mixin ConnectedProductsModel on Model {
   User _authenticatedUser;
   //int _selectedProductIndex;
   final String _firebaseUrl = 'https://flutter-products-69c0b.firebaseio.com';
+  
+  /**
+   * * loading screen of create, edit, main list and manage product list 
+   */
   bool _isLoading = false;
+  /*
+  * set and reset when:
+  * clicked on favorite button on the list 
+  * 
+  * set when:
+  * clicked on info button of product card
+  * edit button in product list 
+  * 
+  * unset when 
+  * back from product page 
+  * submit of edit screen 
+  * 
+  */
   String _selectedProductId;
 
   bool get isLoading => _isLoading;
