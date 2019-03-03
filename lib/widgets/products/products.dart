@@ -12,7 +12,7 @@ class Products extends StatelessWidget {
 
   Widget _buildWidgetToRender(List<Product> products) {
     Widget renderWidget = ListView.builder(
-      itemBuilder: (BuildContext context, int index) => ProductCard(products[index], index),
+      itemBuilder: (BuildContext context, int index) => ProductCard(products[index], products[index].id),
       itemCount: products.length,
     );
 

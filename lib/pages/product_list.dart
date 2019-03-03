@@ -29,14 +29,15 @@ class ListProductState extends State<ListProduct> {
         return IconButton(
           icon: Icon(Icons.edit),
           onPressed: () {
-            model.selectProduct(index);
+            final _id = model.getProduct(index:index).id;
+            model.setSelectedProductId(_id);
             Navigator.of(context).push(
               MaterialPageRoute(
                 builder: (BuildContext context) {
                   return EditProduct();
                 },
               ),
-            ).then((_) => model.setSelectedIndex(null));
+            ).then((_) => model.setSelectedProductId(null));
           },
         );
       },
@@ -64,10 +65,11 @@ class ListProductState extends State<ListProduct> {
             return Dismissible(
               onDismissed: (DismissDirection direction) {
                 if (direction == DismissDirection.startToEnd) {
-                  model.deleteProduct(index);
+
+                  model.deleteProduct(id:model.getProduct(index: index).id);
                 }
               },
-              key: Key(model.getProduct(index).title),
+              key: Key(model.getProduct(index: index).title),
               background: Container(
                 color: Colors.red,
               ),
@@ -76,10 +78,10 @@ class ListProductState extends State<ListProduct> {
                   ListTile(
                     leading: CircleAvatar(
                       backgroundImage:
-                          NetworkImage(model.getProduct(index).image),
+                          NetworkImage(model.getProduct(index:index).image),
                     ),
-                    title: Text(model.getProduct(index).title),
-                    subtitle: Text('\$${model.getProduct(index).price}'),
+                    title: Text(model.getProduct(index:index).title),
+                    subtitle: Text('\$${model.getProduct(index:index).price}'),
                     trailing: this._buildEditButton(context, index),
                   ),
                   Divider(),

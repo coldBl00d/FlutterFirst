@@ -7,12 +7,11 @@ import '../scoped-models/main.dart';
 import '../models/Product.dart';
 
 class ProductPage extends StatelessWidget {
-  final int productIndex;
   final MainModel model;
 
-  ProductPage(this.productIndex, this.model);
+  ProductPage({@required this.model});
 
-  _showWarningDialogue(BuildContext context, int index) {
+  _showWarningDialogue(BuildContext context, String id) {
     showDialog(
         context: context,
         builder: (BuildContext context) {
@@ -27,10 +26,10 @@ class ProductPage extends StatelessWidget {
               FlatButton(
                   child: Text("Continue"),
                   onPressed: () {
-                    model.deleteProduct(index).then((_) {
-                      Navigator.pop(context);
-                      Navigator.pop(context, true);
+                    model.deleteProduct(id:id).then((_) {
                     });
+                    Navigator.pop(context);
+                    Navigator.pop(context, true);
                   })
             ],
           );
@@ -38,7 +37,7 @@ class ProductPage extends StatelessWidget {
   }
 
   Widget _buildContent(
-      BuildContext context, List<Product> products, int index) {
+      BuildContext context, Product product) {
     return Scaffold(
       body: CustomScrollView(
         slivers: <Widget>[
@@ -48,14 +47,14 @@ class ProductPage extends StatelessWidget {
             flexibleSpace: FlexibleSpaceBar(
               //title: TitleDefault(products[index].title),
               background: Image(
-                image: NetworkImage(products[index].image),
+                image: NetworkImage(product.image),
                 fit: BoxFit.cover,
               ),
             ),
             actions: <Widget>[
               IconButton(
                 icon: Icon(Icons.delete),
-                onPressed: () => _showWarningDialogue(context, index),
+                onPressed: () => _showWarningDialogue(context, product.id),
               ),
             ],
             //floating: true,
@@ -85,10 +84,10 @@ class ProductPage extends StatelessWidget {
                           Card(
                             shape: CircleBorder(),
                             child: IconButton(
-                              icon: Icon(products[index].isFavorite?Icons.favorite:Icons.favorite_border),
+                              icon: Icon(product.isFavorite?Icons.favorite:Icons.favorite_border),
                               color: Theme.of(context).accentColor,
                               onPressed: () {
-                                model.toggleProductFavorite(index);
+                                model.toggleProductFavorite(product.id, unsetSelectedProduct: false); // TODO Improve toggleProductFavorite by not disselecting the current product in the model if from here.
                               },
                             ),
                           )
@@ -101,7 +100,7 @@ class ProductPage extends StatelessWidget {
                         children: <Widget>[
                           Container(
                             child: Text(
-                              '\$${products[index].price.toString()}', //products[index].title,
+                              '\$${product.price.toString()}', //products[index].title,
                               style: TextStyle(
                                   fontSize: 20.0, color: Colors.grey.shade900),
                             ),
@@ -131,7 +130,7 @@ class ProductPage extends StatelessWidget {
                                         Container(
                                           padding: EdgeInsets.all(10),
                                           child:
-                                              Text("${products[index].desc}", style: TextStyle(
+                                              Text("${product.desc}", style: TextStyle(
                                                 fontSize: 20,
                                                 color: Colors.black87,
                                               ),),
@@ -188,16 +187,22 @@ class ProductPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // TODO: implement build
+
+    
+
     return WillPopScope(
       onWillPop: () {
+        
+        model!=null?model.setSelectedProductId(null):debugPrint("[Product Page] Encountered null model when trying to reset selected product on back button");
         print("Back button pressed");
         Navigator.pop(context, false);
         return Future.value(false);
       },
       child: ScopedModelDescendant<MainModel>(
         builder: (BuildContext context, Widget child, MainModel model) {
+          //this.model = model;
           return _buildContent(
-              context, model.displayedProducts, this.productIndex);
+              context, model.getSelectedProduct());
         },
       ),
     );

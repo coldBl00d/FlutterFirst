@@ -8,9 +8,9 @@ import 'package:scoped_model/scoped_model.dart';
 
 class ProductCard extends StatelessWidget {
   final Product product;
-  final int index;
+  final String productId;
 
-  ProductCard(this.product, this.index);
+  ProductCard(this.product, this.productId);
 
   Widget _buildTitlePriceRow() {
     return Container(
@@ -30,7 +30,6 @@ class ProductCard extends StatelessWidget {
   }
 
   Widget _buildButtons(BuildContext context) {
-
     return ButtonBar(alignment: MainAxisAlignment.center, children: <Widget>[
       IconButton(
         color: Theme.of(context).primaryColor,
@@ -38,7 +37,7 @@ class ProductCard extends StatelessWidget {
           Icons.info,
         ),
         onPressed: () =>
-            Navigator.pushNamed<bool>(context, '/product/' + index.toString())
+            Navigator.pushNamed<bool>(context, '/product/' + productId)
                 .then((bool doDelete) {
               if (doDelete) {
                 //this.deleteProduct(index);
@@ -51,15 +50,15 @@ class ProductCard extends StatelessWidget {
       ScopedModelDescendant<MainModel>(
         builder: (BuildContext context, Widget child, MainModel model) {
           Icon heartIcon = Icon(Icons.favorite_border);
-          if(model.getProduct(index).isFavorite)
+          if (model.getProduct(id:this.product.id).isFavorite)
             heartIcon = Icon(Icons.favorite);
           return IconButton(
             color: Colors.red,
             icon: heartIcon,
             onPressed: () {
-               
               // model.selectProduct(index);
-              model.toggleProductFavorite(index);
+              debugPrint("Toggling favorite of product id "+ productId);
+              model.toggleProductFavorite(productId, unsetSelectedProduct: true);
             },
           );
         },
@@ -74,7 +73,12 @@ class ProductCard extends StatelessWidget {
     return Card(
       child: Column(
         children: <Widget>[
-          Image.network(product.image),
+          FadeInImage(
+            image: NetworkImage(product.image),
+            height: 300,
+            fit:BoxFit.cover,
+            placeholder: AssetImage('assets/food.jpg'),
+          ),
           this._buildTitlePriceRow(),
           AddressTag(), //Add address as parameter
           this._buildButtons(context)

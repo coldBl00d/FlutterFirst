@@ -125,7 +125,8 @@ class EditProductState extends State<EditProduct> {
       updateProduct(
               title: this._formData['title'],
               price: this._formData['price'],
-              desc: this._formData['desc'])
+              desc: this._formData['desc'],
+              unsetSelectedAfterUpdate : false)
           .then(
         (_) {
           Navigator.pushReplacementNamed(context, '/products')
@@ -158,7 +159,7 @@ class EditProductState extends State<EditProduct> {
                 model.addProduct,
                 model.updateProduct,
                 model.getSelectedProduct(),
-                model.setSelectedIndex),
+                model.setSelectedProductId),
           );
         }
       },
@@ -213,7 +214,7 @@ class EditProductState extends State<EditProduct> {
       builder: (BuildContext context, Widget child, MainModel model) {
         final Widget mainContent =
             _buildMainContent(_targetPadding, _targetWidth, context, model);
-        return model.getSelectedProductIndex() == null
+        return model.selectedProductId == null
             ? mainContent
             : Scaffold(
                 appBar: AppBar(

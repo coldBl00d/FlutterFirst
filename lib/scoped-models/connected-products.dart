@@ -8,11 +8,16 @@ import 'dart:convert' as convert;
 mixin ConnectedProductsModel on Model {
   final List<Product> _products = [];
   User _authenticatedUser;
-  int _selectedProductIndex;
+  //int _selectedProductIndex;
   final String _firebaseUrl = 'https://flutter-products-69c0b.firebaseio.com';
   bool _isLoading = false;
+  String _selectedProductId;
 
   bool get isLoading => _isLoading;
+
+  String get selectedProductId {
+    return _selectedProductId;
+  }
 
   Future<Null> addProduct(
       {@required String title,
@@ -34,6 +39,7 @@ mixin ConnectedProductsModel on Model {
       'userId': _authenticatedUser == null
           ? "kajsdkfjaslkdfj"
           : _authenticatedUser.id,
+      'isFavorite': isFavorite
     };
 
     return http
@@ -61,7 +67,7 @@ mixin ConnectedProductsModel on Model {
               image: image);
 
           this._products.add(newProduct);
-          this._selectedProductIndex = null;
+          this._selectedProductId = null;
           _isLoading = false;
           notifyListeners();
         }
@@ -89,19 +95,30 @@ mixin ProductsModel on ConnectedProductsModel {
     return this._isFavoriteMode;
   }
 
-  void setSelectedIndex(int index) {
-    this._selectedProductIndex = index;
-    print("Product selection cleared");
+  void setSelectedProductId(String id) {
+    this._selectedProductId = id;
+    if (id != null)
+      print("Product selection set to " + id.toString());
+    else
+      debugPrint("Clearing product selection");
   }
 
-  Future<Null> deleteProduct(int index) {
-    print("Delete Product " + index.toString());
+  Future<Null> deleteProduct({String id, int index}) {
+    print("Delete Product " + id);
+
     return http
-        .delete(_firebaseUrl + '/products/${this.getProduct(index).id}.json')
+        .delete(_firebaseUrl + '/products/${id}.json')
         .then((http.Response res) {
       if (res.statusCode == 200) {
-        this._products.removeAt(index);
-        this._selectedProductIndex = null;
+        index = _products.indexWhere((Product product) {
+          return product.id == id;
+        });
+
+        if (index != -1) {
+          this._products.removeAt(index);
+          debugPrint("Deleted product at index "+index.toString());
+        }
+        _selectedProductId = null;
         notifyListeners();
       }
     });
@@ -114,7 +131,8 @@ mixin ProductsModel on ConnectedProductsModel {
       String image = 'assets/food.jpg',
       bool isFavorite = false,
       String userEmail,
-      String userId}) {
+      String userId,
+      bool unsetSelectedAfterUpdate=true}) {
     _isLoading = true;
     notifyListeners();
 
@@ -144,6 +162,7 @@ mixin ProductsModel on ConnectedProductsModel {
       'userId': _authenticatedUser == null
           ? "kajsdkfjaslkdfj"
           : _authenticatedUser.id,
+      'isFavorite': isFavorite,
     };
 
     return http
@@ -152,53 +171,66 @@ mixin ProductsModel on ConnectedProductsModel {
         .then((http.Response res) {
       if (res.statusCode == 200) {
         print("Status is 200 for update");
-        this._products[this._selectedProductIndex] = updatedProduct;
+        final int selectedProductIndex =
+            _products.indexWhere((Product product) {
+          return product.id == _selectedProductId;
+        });
+        this._products[selectedProductIndex] = updatedProduct;
       }
       print("Setting isLoading to false by update product");
       _isLoading = false;
-      this.setSelectedIndex(null);
+      if (unsetSelectedAfterUpdate) {
+        debugPrint("Unsetting selected product :" +
+            this.selectedProductId.toString() +
+            " to null");
+        this.setSelectedProductId(null);
+      }
       notifyListeners();
     });
     //this._selectedProductIndex = null;
   }
 
-  void selectProduct(int index) {
-    //assert(index <= this._products.length);
-    //assert(index >= 0);
-    //assert(this._products != null);
-    this._selectedProductIndex = index;
-  }
+  
 
 //! Flaky code
   Product getSelectedProduct() {
-    if (this._selectedProductIndex != null &&
-        _selectedProductIndex <= _products.length - 1) {
-      return _products[this._selectedProductIndex];
-    }
-    return null;
+    return _products.firstWhere((Product product) {
+      if (_selectedProductId != null) {
+        return product.id == _selectedProductId;
+      } else {
+        return false;
+      }
+    }, orElse: () {
+      return null;
+    });
   }
 
   int getProductCount() {
     return this._products.length;
   }
 
-  int getSelectedProductIndex() {
-    return this._selectedProductIndex;
+  String get selectedProductId {
+    return this._selectedProductId;
   }
 
-  Product getProduct(int index) {
-    if (index <= this._products.length) {
-      return this._products[index];
-    } else {
-      return null;
+  Product getProduct({String id, int index}) {
+    if (id != null && id.length > 0 && index == null) {
+      debugPrint("Getting product for id " + id);
+      return _products.firstWhere((Product product) {
+        return product.id == id;
+      }, orElse: () {
+        return null;
+      });
+    } else if (index != null && id == null) {
+      if (index <= _products.length - 1) return _products[index];
     }
+    return null;
   }
 
-  void toggleProductFavorite(int index) {
-    this.selectProduct(index);
+  void toggleProductFavorite(String id, {bool unsetSelectedProduct}) {
+    this.setSelectedProductId(id);
     Product selectedProduct = this.getSelectedProduct();
-    bool newIsFavoriteStatus =
-        !(this._products[this._selectedProductIndex].isFavorite);
+    bool newIsFavoriteStatus = !(this.getSelectedProduct().isFavorite);
     this.updateProduct(
         title: selectedProduct.title,
         price: selectedProduct.price,
@@ -210,22 +242,23 @@ mixin ProductsModel on ConnectedProductsModel {
             ? "kajsdkfjaslkdfj"
             : _authenticatedUser.id,
         isFavorite: newIsFavoriteStatus,
-        image: selectedProduct.image);
+        image: selectedProduct.image,
+        unsetSelectedAfterUpdate: unsetSelectedProduct);
     notifyListeners();
   }
 
   void toggleDisplayMode() {
     this._isFavoriteMode = !this._isFavoriteMode;
-    this._selectedProductIndex = null;
+    this._selectedProductId = null;
     notifyListeners();
   }
 
-  void fetchProducts() {
+  Future<Null> fetchProducts() {
     _isLoading = true;
     print("Setting isloading to true by fetchProduct");
     notifyListeners();
     _products.clear();
-    http.get(_firebaseUrl + '/products.json').then(
+    return http.get(_firebaseUrl + '/products.json').then(
       (http.Response res) {
         print(convert.json.decode(res.body).toString());
         Map<String, dynamic> bodyMap = convert.json.decode(res.body);
@@ -240,6 +273,7 @@ mixin ProductsModel on ConnectedProductsModel {
                 userEmail: product['userEmail'],
                 userId: product['userId'],
                 image: product['image'],
+                isFavorite: product['isFavorite'],
               );
               _products.add(p);
             },

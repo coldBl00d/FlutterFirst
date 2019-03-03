@@ -13,7 +13,7 @@ class ProductsPage extends StatefulWidget {
 
   //ProductsPage(this._products, this._addProduct, this._deleteProduct );
 
-  final MainModel _model; 
+  final MainModel _model;
 
   ProductsPage(this._model);
 
@@ -24,14 +24,13 @@ class ProductsPage extends StatefulWidget {
   }
 }
 
-class ProductsPageState extends State<ProductsPage>{
-
+class ProductsPageState extends State<ProductsPage> {
   @override
-  initState(){
+  initState() {
     super.initState();
     widget._model.fetchProducts();
   }
-  
+
   Drawer _buildSideDrawer(BuildContext context) {
     return Drawer(
       //child: MyDrawer()
@@ -58,10 +57,10 @@ class ProductsPageState extends State<ProductsPage>{
     );
   }
 
-  Widget _buildSpinner(){
+  Widget _buildSpinner() {
     return Center(
       child: CircularProgressIndicator(
-        value: null, 
+        value: null,
         backgroundColor: Colors.blue,
       ),
     );
@@ -71,31 +70,39 @@ class ProductsPageState extends State<ProductsPage>{
   Widget build(BuildContext context) {
     // TODO: implement build
     return Scaffold(
-      drawer: this._buildSideDrawer(context),
-      appBar: AppBar(
-        title: Text('Home'),
-        actions: <Widget>[
-          ScopedModelDescendant<MainModel>(
-            builder: (BuildContext context, Widget child, MainModel model) {
-              return IconButton(
-                icon: Icon(model.favoriteMode?Icons.favorite:Icons.favorite_border),
-                onPressed: () {
-                  model.toggleDisplayMode();
-                },
-              );
-            },
-          ),
-        ],
-      ),
-      body: ScopedModelDescendant<MainModel>(
-        builder: (BuildContext context, Widget child, MainModel model){
-          if(model.isLoading){
-            return _buildSpinner();
-          }else{
-            return Products();
-          }
-        },
-      )
-    );
+        drawer: this._buildSideDrawer(context),
+        appBar: AppBar(
+          title: Text('Home'),
+          actions: <Widget>[
+            ScopedModelDescendant<MainModel>(
+              builder: (BuildContext context, Widget child, MainModel model) {
+                return IconButton(
+                  icon: Icon(model.favoriteMode
+                      ? Icons.favorite
+                      : Icons.favorite_border),
+                  onPressed: () {
+                    model.toggleDisplayMode();
+                  },
+                );
+              },
+            ),
+          ],
+        ),
+        body: ScopedModelDescendant<MainModel>(
+          builder: (BuildContext context, Widget child, MainModel model) {
+            Widget renderedWidget;
+            if (model.isLoading) {
+              renderedWidget = _buildSpinner();
+            } else {
+              renderedWidget = Products();
+            }
+            return RefreshIndicator(
+              child: renderedWidget,
+              onRefresh: () {
+                return model.fetchProducts();
+              },
+            );
+          },
+        ));
   }
 }
