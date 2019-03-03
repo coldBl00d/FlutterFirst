@@ -4,11 +4,28 @@ import './product_edit.dart';
 import './product_list.dart';
 import '../widgets/my_drawer.dart';
 
+import '../scoped-models/main.dart';
+
 
 /*
   Manage product -- Create product and My Product Tabs
 */ 
-class ManageProductsPage extends StatelessWidget {
+class ManageProductsPage extends StatefulWidget {
+  MainModel model; 
+
+  ManageProductsPage({@required this.model});
+
+  @override
+  State<StatefulWidget> createState() {
+    // TODO: implement createState
+    return ManageProductState();
+  }
+
+}  
+
+class ManageProductState extends State<ManageProductsPage>{
+
+
   @override
   Widget build(BuildContext context) {
     // TODO: implement build
@@ -30,7 +47,7 @@ class ManageProductsPage extends StatelessWidget {
           children: <Widget>[
             //should be equal to the number of tabs ^ length
             EditProduct(),
-            ListProduct(),
+            ListProduct(model: widget.model),
           ],
         ),
       ),

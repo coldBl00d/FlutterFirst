@@ -18,7 +18,8 @@ mixin ConnectedProductsModel on Model {
       {@required String title,
       @required String desc,
       @required double price,
-      String image = 'https://moneyinc.com/wp-content/uploads/2017/07/Chocolate.jpg',
+      String image =
+          'https://moneyinc.com/wp-content/uploads/2017/07/Chocolate.jpg',
       bool isFavorite = false}) {
     _isLoading = true;
     notifyListeners();
@@ -27,8 +28,12 @@ mixin ConnectedProductsModel on Model {
       'desc': desc,
       'price': price,
       'image': 'https://moneyinc.com/wp-content/uploads/2017/07/Chocolate.jpg',
-      'userEmail': this._authenticatedUser.email,
-      'userId': this._authenticatedUser.id
+      'userEmail': _authenticatedUser == null
+          ? "temp@oracle.com"
+          : _authenticatedUser.email,
+      'userId': _authenticatedUser == null
+          ? "kajsdkfjaslkdfj"
+          : _authenticatedUser.id,
     };
 
     return http
@@ -47,9 +52,13 @@ mixin ConnectedProductsModel on Model {
               desc: desc,
               price: price,
               isFavorite: isFavorite,
-              userEmail: this._authenticatedUser.email,
-              userId: this._authenticatedUser.id,
-              image:image);
+              userEmail: _authenticatedUser == null
+                  ? "temp@oracle.com"
+                  : _authenticatedUser.email,
+              userId: _authenticatedUser == null
+                  ? "kajsdkfjaslkdfj"
+                  : _authenticatedUser.id,
+              image: image);
 
           this._products.add(newProduct);
           this._selectedProductIndex = null;
@@ -85,12 +94,20 @@ mixin ProductsModel on ConnectedProductsModel {
     print("Product selection cleared");
   }
 
-  void deleteProduct(int index) {
-    this._products.removeAt(index);
-    this._selectedProductIndex = null;
+  Future<Null> deleteProduct(int index) {
+    print("Delete Product " + index.toString());
+    return http
+        .delete(_firebaseUrl + '/products/${this.getProduct(index).id}.json')
+        .then((http.Response res) {
+      if (res.statusCode == 200) {
+        this._products.removeAt(index);
+        this._selectedProductIndex = null;
+        notifyListeners();
+      }
+    });
   }
 
-  void updateProduct(
+  Future<Null> updateProduct(
       {@required String title,
       @required String desc,
       @required double price,
@@ -98,26 +115,64 @@ mixin ProductsModel on ConnectedProductsModel {
       bool isFavorite = false,
       String userEmail,
       String userId}) {
+    _isLoading = true;
+    notifyListeners();
+
     Product updatedProduct = Product(
-        title: title,
-        desc: desc,
-        price: price,
-        isFavorite: isFavorite,
-        userEmail: this._authenticatedUser.email,
-        userId: this._authenticatedUser.id);
-    this._products[this._selectedProductIndex] = updatedProduct;
+      id: this.getSelectedProduct().id, //flaky
+      title: title,
+      desc: desc,
+      price: price,
+      isFavorite: isFavorite,
+      image: 'https://moneyinc.com/wp-content/uploads/2017/07/Chocolate.jpg',
+      userEmail: _authenticatedUser == null
+          ? "temp@oracle.com"
+          : _authenticatedUser.email,
+      userId: _authenticatedUser == null
+          ? "kajsdkfjaslkdfj"
+          : _authenticatedUser.id,
+    );
+
+    Map<String, dynamic> updateData = {
+      'title': title,
+      'desc': desc,
+      'image': 'https://moneyinc.com/wp-content/uploads/2017/07/Chocolate.jpg',
+      'price': price,
+      'userEmail': _authenticatedUser == null
+          ? "temp@oracle.com"
+          : _authenticatedUser.email,
+      'userId': _authenticatedUser == null
+          ? "kajsdkfjaslkdfj"
+          : _authenticatedUser.id,
+    };
+
+    return http
+        .put(_firebaseUrl + '/products/${updatedProduct.id}.json',
+            body: convert.json.encode(updateData))
+        .then((http.Response res) {
+      if (res.statusCode == 200) {
+        print("Status is 200 for update");
+        this._products[this._selectedProductIndex] = updatedProduct;
+      }
+      print("Setting isLoading to false by update product");
+      _isLoading = false;
+      this.setSelectedIndex(null);
+      notifyListeners();
+    });
     //this._selectedProductIndex = null;
   }
 
   void selectProduct(int index) {
-    assert(index <= this._products.length);
-    assert(index >= 0);
-    assert(this._products != null);
+    //assert(index <= this._products.length);
+    //assert(index >= 0);
+    //assert(this._products != null);
     this._selectedProductIndex = index;
   }
 
+//! Flaky code
   Product getSelectedProduct() {
-    if (this._selectedProductIndex != null) {
+    if (this._selectedProductIndex != null &&
+        _selectedProductIndex <= _products.length - 1) {
       return _products[this._selectedProductIndex];
     }
     return null;
@@ -148,9 +203,13 @@ mixin ProductsModel on ConnectedProductsModel {
         title: selectedProduct.title,
         price: selectedProduct.price,
         desc: selectedProduct.desc,
-        userEmail: _authenticatedUser.email,
-        userId: _authenticatedUser.password,
-        isFavorite: newIsFavoriteStatus, 
+        userEmail: _authenticatedUser == null
+            ? "temp@oracle.com"
+            : _authenticatedUser.email,
+        userId: _authenticatedUser == null
+            ? "kajsdkfjaslkdfj"
+            : _authenticatedUser.id,
+        isFavorite: newIsFavoriteStatus,
         image: selectedProduct.image);
     notifyListeners();
   }
@@ -163,6 +222,7 @@ mixin ProductsModel on ConnectedProductsModel {
 
   void fetchProducts() {
     _isLoading = true;
+    print("Setting isloading to true by fetchProduct");
     notifyListeners();
     _products.clear();
     http.get(_firebaseUrl + '/products.json').then(

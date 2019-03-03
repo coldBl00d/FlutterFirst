@@ -4,7 +4,25 @@ import '../pages/product_edit.dart';
 //import '../models/main.dart';
 import 'package:scoped_model/scoped_model.dart';
 
-class ListProduct extends StatelessWidget {
+class ListProduct extends StatefulWidget {
+  MainModel model;
+
+  ListProduct({@required this.model});
+
+  @override
+  State<StatefulWidget> createState() {
+    // TODO: implement createState
+    return ListProductState();
+  }
+}
+
+class ListProductState extends State<ListProduct> {
+  @override
+  void initState() {
+    super.initState();
+    widget.model.fetchProducts();
+  }
+
   Widget _buildEditButton(BuildContext context, int index) {
     return ScopedModelDescendant<MainModel>(
       builder: (BuildContext context, Widget child, MainModel model) {
@@ -27,7 +45,16 @@ class ListProduct extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // TODO: implement buildll;
+    return ScopedModelDescendant<MainModel>(
+      builder: (BuildContext context, Widget child, MainModel model) {
+        return widget.model.isLoading
+            ? Center(child: CircularProgressIndicator())
+            : _buildList();
+      },
+    );
+  }
+
+  Widget _buildList() {
     return Padding(
       padding: EdgeInsets.all(10),
       child: ScopedModelDescendant<MainModel>(

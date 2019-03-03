@@ -8,10 +8,11 @@ import '../models/Product.dart';
 
 class ProductPage extends StatelessWidget {
   final int productIndex;
+  final MainModel model;
 
-  ProductPage(this.productIndex);
+  ProductPage(this.productIndex, this.model);
 
-  _showWarningDialogue(BuildContext context) {
+  _showWarningDialogue(BuildContext context, int index) {
     showDialog(
         context: context,
         builder: (BuildContext context) {
@@ -26,8 +27,10 @@ class ProductPage extends StatelessWidget {
               FlatButton(
                   child: Text("Continue"),
                   onPressed: () {
-                    Navigator.pop(context);
-                    Navigator.pop(context, true);
+                    model.deleteProduct(index).then((_) {
+                      Navigator.pop(context);
+                      Navigator.pop(context, true);
+                    });
                   })
             ],
           );
@@ -45,14 +48,14 @@ class ProductPage extends StatelessWidget {
             flexibleSpace: FlexibleSpaceBar(
               //title: TitleDefault(products[index].title),
               background: Image(
-                image: AssetImage('assets/food.jpg'),
+                image: NetworkImage(products[index].image),
                 fit: BoxFit.cover,
               ),
             ),
             actions: <Widget>[
               IconButton(
                 icon: Icon(Icons.delete),
-                onPressed: () => _showWarningDialogue(context),
+                onPressed: () => _showWarningDialogue(context, index),
               ),
             ],
             //floating: true,
@@ -82,9 +85,11 @@ class ProductPage extends StatelessWidget {
                           Card(
                             shape: CircleBorder(),
                             child: IconButton(
-                              icon: Icon(Icons.favorite_border),
+                              icon: Icon(products[index].isFavorite?Icons.favorite:Icons.favorite_border),
                               color: Theme.of(context).accentColor,
-                              onPressed: () {},
+                              onPressed: () {
+                                model.toggleProductFavorite(index);
+                              },
                             ),
                           )
                         ],
@@ -95,18 +100,8 @@ class ProductPage extends StatelessWidget {
                       Row(
                         children: <Widget>[
                           Container(
-                            // decoration: BoxDecoration(
-                            //   borderRadius:
-                            //       BorderRadius.all(Radius.circular(10)),
-                            //   border: Border.all(
-                            //       color: Theme.of(context).accentColor,
-                            //       width: 2),
-                            //   shape: BoxShape.rectangle,
-                            // ),
-                            // padding: EdgeInsets.symmetric(
-                            //     vertical: 5, horizontal: 10),
                             child: Text(
-                              '\$20.0', //products[index].title,
+                              '\$${products[index].price.toString()}', //products[index].title,
                               style: TextStyle(
                                   fontSize: 20.0, color: Colors.grey.shade900),
                             ),
@@ -114,25 +109,34 @@ class ProductPage extends StatelessWidget {
                         ],
                       ),
                       SizedBox(
-                        height: 60,
+                        height: 10,
                       ),
                       Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
+                        mainAxisAlignment: MainAxisAlignment.start,
                         children: <Widget>[
                           Expanded(
-                            child: Card(
-                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-                              child: Container(
-                                height: 200,
-                                padding: EdgeInsets.all(10),
-                                child: Column(
-                                  children: <Widget>[
-                                    Container(
-                                      child: Row(
-                                        children: [
-                                          Text("Hello world"),
-                                        ],
-                                      ),
+                            child: Container(
+                              height: 200,
+                              child: Card(
+                                color: Colors.blue[30],
+                                shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(10)),
+                                child: Row(
+                                  crossAxisAlignment:
+                                      CrossAxisAlignment.stretch,
+                                      mainAxisAlignment: MainAxisAlignment.start,
+                                  children: [
+                                    Column(
+                                      children: <Widget>[
+                                        Container(
+                                          padding: EdgeInsets.all(10),
+                                          child:
+                                              Text("${products[index].desc}", style: TextStyle(
+                                                fontSize: 20,
+                                                color: Colors.black87,
+                                              ),),
+                                        ),
+                                      ],
                                     ),
                                   ],
                                 ),

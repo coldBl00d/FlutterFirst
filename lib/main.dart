@@ -46,7 +46,7 @@ class _MyAppState extends State<MyApp> {
           '/': (BuildContext context) =>
               AuthPage(), //represents home --> either have this or home argument in the material app
           '/products': (BuildContext context) => ProductsPage(_mainModel),
-          '/admin': (BuildContext context) => ManageProductsPage(),
+          '/admin': (BuildContext context) => ManageProductsPage(model:_mainModel),
           // '/product':(BuildContext context) => ProductPage()
         },
         onGenerateRoute: (RouteSettings settings) {
@@ -60,7 +60,7 @@ class _MyAppState extends State<MyApp> {
             final int index = int.parse(pathElement[2]);
             return MaterialPageRoute<bool>(
               builder: (BuildContext context) {
-                return ProductPage(index);
+                return ProductPage(index, _mainModel);
               },
             );
           }

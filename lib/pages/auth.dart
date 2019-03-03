@@ -3,7 +3,7 @@ import 'package:scoped_model/scoped_model.dart';
 
 import '../scoped-models/main.dart';
 
-class AuthPage extends StatefulWidget {
+class AuthPage extends StatefulWidget { 
   final Map<String, dynamic> _creds = {
     'email': null,
     'password': null,
