@@ -36,6 +36,12 @@ mixin ConnectedProductsModel on Model {
     return _selectedProductId;
   }
 
+  
+}
+
+mixin ProductsModel on ConnectedProductsModel {
+  bool _isFavoriteMode = false;
+
   Future<bool> addProduct(
       {@required String title,
       @required String desc,
@@ -101,10 +107,6 @@ mixin ConnectedProductsModel on Model {
       return false;
     });
   }
-}
-
-mixin ProductsModel on ConnectedProductsModel {
-  bool _isFavoriteMode = false;
 
   List<Product> get allProducts {
     return List.from(_products);
@@ -318,7 +320,7 @@ mixin ProductsModel on ConnectedProductsModel {
         _isLoading = false;
         notifyListeners();
       },
-    )..catchError((error){
+    ).catchError((error){
       _isLoading = false;
       notifyListeners();
       return null;
