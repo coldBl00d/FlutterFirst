@@ -3,6 +3,11 @@ import 'package:scoped_model/scoped_model.dart';
 
 import '../scoped-models/main.dart';
 
+enum AuthMode {
+  SignUp, 
+  Login
+}
+
 class AuthPage extends StatefulWidget { 
   final Map<String, dynamic> _creds = {
     'email': null,
@@ -18,6 +23,7 @@ class AuthPage extends StatefulWidget {
 }
 
 class AuthPageState extends State<AuthPage> {
+  final TextEditingController _passwordController =TextEditingController();
   final GlobalKey<FormState> authKey = GlobalKey<FormState>();
 
   DecorationImage _buildDecorationImage() {
@@ -50,9 +56,30 @@ class AuthPageState extends State<AuthPage> {
     );
   }
 
+  Widget _buildConfirmPasswordTF() {
+    return TextFormField(
+      ////initialValue: 'jdjdjdjdjdjdjdjdjdj',
+      onSaved: (String i) {
+        widget._creds['password'] = i;
+      },
+      /*validator: (String password) {
+        if(_passwordController.text !=password){
+          return "Password mismatch";
+        }
+      },*/
+      obscureText: true,
+      decoration: InputDecoration(
+        labelText: "Password",
+        filled: true,
+        fillColor: Colors.white,
+      ),
+    );
+  }
+
   Widget _buildPasswordTF() {
     return TextFormField(
-      initialValue: 'jdjdjdjdjdjdjdjdjdj',
+      ////initialValue: 'jdjdjdjdjdjdjdjdjdj',
+      controller: _passwordController,
       onSaved: (String i) {
         widget._creds['password'] = i;
       },
@@ -133,7 +160,13 @@ class AuthPageState extends State<AuthPage> {
                     this._buildEmailTF(),
                     SizedBox(height: 10.0),
                     this._buildPasswordTF(),
+                    SizedBox(height: 10.0),
+                    this._buildConfirmPasswordTF(),
                     this._buildAcceptSwitch(),
+                    SizedBox(
+                      height: 10.0,
+                    ),
+                    FlatButton(child: Text("Sign Up"),),
                     SizedBox(
                       height: 10.0,
                     ),

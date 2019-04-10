@@ -158,7 +158,7 @@ mixin ProductsModel on ConnectedProductsModel {
     });
   }
 
-  Future<bool> updateProduct(
+  Future<dynamic> updateProduct(
       {@required String title,
       @required String desc,
       @required double price,
@@ -291,7 +291,7 @@ mixin ProductsModel on ConnectedProductsModel {
     notifyListeners();
   }
 
-  Future<Null> fetchProducts() {
+  Future<dynamic> fetchProducts() {
     _isLoading = true;
     print("Setting isloading to true by fetchProduct");
     notifyListeners();

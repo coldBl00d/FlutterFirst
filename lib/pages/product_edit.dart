@@ -35,11 +35,11 @@ class EditProductState extends State<EditProduct> {
           //icon: Icon(Icons.edit)
         ),
         onSaved: (String i) => this._formData['title'] = i,
-        // onChanged: (String i) {
+        // //onChanged: (String i) {
         //   // setState(() {
         //   this._name = i;
         //   //});
-        // },
+        // //},
         validator: (String value) {
           if (value.isEmpty) {
             return "Title is required";
