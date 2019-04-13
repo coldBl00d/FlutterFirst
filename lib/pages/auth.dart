@@ -3,12 +3,9 @@ import 'package:scoped_model/scoped_model.dart';
 
 import '../scoped-models/main.dart';
 
-enum AuthMode {
-  SignUp, 
-  Login
-}
+enum AuthMode { SignUp, Login }
 
-class AuthPage extends StatefulWidget { 
+class AuthPage extends StatefulWidget {
   final Map<String, dynamic> _creds = {
     'email': null,
     'password': null,
@@ -23,8 +20,9 @@ class AuthPage extends StatefulWidget {
 }
 
 class AuthPageState extends State<AuthPage> {
-  final TextEditingController _passwordController =TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
   final GlobalKey<FormState> authKey = GlobalKey<FormState>();
+  AuthMode _curAuthMode = AuthMode.Login;
 
   DecorationImage _buildDecorationImage() {
     return DecorationImage(
@@ -161,12 +159,16 @@ class AuthPageState extends State<AuthPage> {
                     SizedBox(height: 10.0),
                     this._buildPasswordTF(),
                     SizedBox(height: 10.0),
-                    this._buildConfirmPasswordTF(),
+                    _curAuthMode == AuthMode.SignUp? this._buildConfirmPasswordTF(): Container(),
                     this._buildAcceptSwitch(),
                     SizedBox(
                       height: 10.0,
                     ),
-                    FlatButton(child: Text("Sign Up"),),
+                    FlatButton(
+                      child: Text(
+                          "${_curAuthMode == AuthMode.Login ? 'Sign Up' : 'Login'}"),
+                          onPressed: switchAuthMode,
+                    ),
                     SizedBox(
                       height: 10.0,
                     ),
@@ -179,6 +181,16 @@ class AuthPageState extends State<AuthPage> {
         ),
       ),
     );
+  }
+
+  void switchAuthMode(){
+   setState(() {
+     if(_curAuthMode == AuthMode.Login){
+      _curAuthMode = AuthMode.SignUp;
+    }else{
+      _curAuthMode = AuthMode.Login;
+    } 
+   });
   }
 
   @override
