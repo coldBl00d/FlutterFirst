@@ -2,8 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:scoped_model/scoped_model.dart';
 
 import '../scoped-models/main.dart';
-
-enum AuthMode { SignUp, Login }
+import '../models/auth.dart';
 
 class AuthPage extends StatefulWidget {
   final Map<String, dynamic> _creds = {
@@ -111,18 +110,16 @@ class AuthPageState extends State<AuthPage> {
     );
   }
 
-  void submit(Function login, Function signUp) async {
+  void submit(Function authenticate) async {
     print(widget._creds['agreed']);
     if (!this.authKey.currentState.validate() || !(widget._creds['agreed']))
       return;
     this.authKey.currentState.save();
 
     Map<String, dynamic> res;
-    if (_curAuthMode == AuthMode.Login) {
-      res = await login(widget._creds['email'], widget._creds['password']);
-    } else if (_curAuthMode == AuthMode.SignUp) {
-      res = await signUp(widget._creds['email'], widget._creds['password']);
-    }
+
+    res = await authenticate(
+        widget._creds['email'], widget._creds['password'], authMode: _curAuthMode);
 
     if (res['success'] == true) {
       Navigator.pushReplacementNamed(context, '/products');
@@ -157,7 +154,7 @@ class AuthPageState extends State<AuthPage> {
                 textColor: Colors.white70,
                 child: Text(
                     "${_curAuthMode == AuthMode.Login ? 'Login' : 'SignUp'}"),
-                onPressed: () => this.submit(model.login, model.signUp),
+                onPressed: () => this.submit(model.authenticate),
               );
       },
     );

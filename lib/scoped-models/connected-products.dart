@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:scoped_model/scoped_model.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert' as convert;
+import '../models/auth.dart';
 
 mixin ConnectedProductsModel on Model {
   final List<Product> _products = [];
@@ -345,22 +346,35 @@ mixin UserModel on ConnectedProductsModel {
   * Login 
   * email and password 
   * 
-  * Authenticate with firebase 
+  * Authenticate with firebase  
+  * signUp
+  * * Sign up a user to firebase backend. 
+  * * Returns a future. 
+  * ! Write async in front of a method if you want to use await within it. 
+  * ! Always notifylisteners for ui changes listening on scoped model
   */
-  Future<Map<String, dynamic>> login(String email, String password) async {
+
+  Future<Map<String, dynamic>> authenticate(String email, String password,
+      {AuthMode authMode = AuthMode.Login}) async {
     final String _loginEndPoint =
         'https://www.googleapis.com/identitytoolkit/v3/relyingparty/verifyPassword?key=';
+    final String _signupEndPoint =
+        "https://www.googleapis.com/identitytoolkit/v3/relyingparty/signupNewUser?key=";
     final Map<String, dynamic> payload = {
       "email": email,
       "password": password,
       "returnSecureToken": true //* required by firebase to be always true.
     };
+    String endPoint;
 
     _isLoading = true;
     notifyListeners();
 
-    http.Response response = await http.post(_loginEndPoint + _apiKey,
-        body: convert.jsonEncode(payload));
+    endPoint = (authMode == AuthMode.Login) ? _loginEndPoint : _signupEndPoint;
+    endPoint += _apiKey;
+
+    http.Response response =
+        await http.post(endPoint, body: convert.jsonEncode(payload));
 
     _isLoading = false;
     notifyListeners();
@@ -377,47 +391,6 @@ mixin UserModel on ConnectedProductsModel {
         res['error']['message'] == 'INVALID_PASSWORD') {
       hasError = true;
       message = 'Either the email or password is invalid';
-    } else {
-      hasError = true;
-    }
-    return {"success": !hasError, "message": message};
-  }
-
-  /** 
-   * signUp
-   * * Sign up a user to firebase backend. 
-   * * Returns a future. 
-   * ! Write async in front of a method if you want to use await within it. 
-   * ! Always notifylisteners for ui changes listening on scoped model
-   */
-  Future<Map<String, dynamic>> signUp(String email, String password) async {
-    final String _endPoint =
-        "https://www.googleapis.com/identitytoolkit/v3/relyingparty/signupNewUser?key=";
-    final Map<String, dynamic> payload = {
-      "email": email,
-      "password": password,
-      "returnSecureToken": true //* required by firebase to be always true.
-    };
-
-    _isLoading = true;
-    notifyListeners();
-
-    http.Response response =
-        await http.post(_endPoint + _apiKey, body: convert.jsonEncode(payload));
-
-    _isLoading = false;
-    notifyListeners();
-
-    final Map<String, dynamic> res = convert.jsonDecode(response.body);
-    bool hasError = true;
-    String message = 'Something went wrong';
-
-    if (res.containsKey('idToken')) {
-      hasError = false;
-      message = 'Authentication Succeeded';
-    } else if (res['error']['message'] == 'EMAIL_EXISTS') {
-      hasError = true;
-      message = 'Email already exists';
     } else {
       hasError = true;
     }
