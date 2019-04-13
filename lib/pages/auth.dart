@@ -156,7 +156,7 @@ class AuthPageState extends State<AuthPage> {
       builder: (BuildContext context, Widget child, MainModel model) {
         return RaisedButton(
           textColor: Colors.white70,
-          child: Text("Login"),
+          child: Text("${_curAuthMode == AuthMode.Login? 'Login':'SignUp'}"),
           onPressed: () => this.submit(model.login, model.signUp),
         );
       },
