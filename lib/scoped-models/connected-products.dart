@@ -10,6 +10,7 @@ mixin ConnectedProductsModel on Model {
   User _authenticatedUser;
   //int _selectedProductIndex;
   final String _firebaseUrl = 'https://flutter-products-69c0b.firebaseio.com';
+  final String _apiKey = "AIzaSyDs4DweYP5hDkE_0kRU-7NF8TxWY3GnIes";
 
   /**
    * * loading screen of create, edit, main list and manage product list 
@@ -320,7 +321,9 @@ mixin ProductsModel on ConnectedProductsModel {
                 userEmail: product['userEmail'],
                 userId: product['userId'],
                 image: product['image'],
-                isFavorite: product['isFavorite']==null?false:product['isFavorite'],
+                isFavorite: product['isFavorite'] == null
+                    ? false
+                    : product['isFavorite'],
               );
               _products.add(p);
             },
@@ -338,8 +341,46 @@ mixin ProductsModel on ConnectedProductsModel {
 }
 
 mixin UserModel on ConnectedProductsModel {
-  void login(String email, String password) {
-    _authenticatedUser = User('jdifhendlci', email, password);
+  /*
+  * Login 
+  * email and password 
+  * 
+  * Authenticate with firebase 
+  */
+  Future<Map<String, dynamic>> login(String email, String password) async {
+    final String _loginEndPoint =
+        'https://www.googleapis.com/identitytoolkit/v3/relyingparty/verifyPassword?key=';
+    final Map<String, dynamic> payload = {
+      "email": email,
+      "password": password,
+      "returnSecureToken": true //* required by firebase to be always true.
+    };
+
+    _isLoading = true;
+    notifyListeners();
+
+    http.Response response = await http.post(_loginEndPoint + _apiKey,
+        body: convert.jsonEncode(payload));
+
+    _isLoading = false;
+    notifyListeners();
+
+    final Map<String, dynamic> res = convert.jsonDecode(response.body);
+    bool hasError = true;
+    String message = 'Something went wrong';
+
+    if (res.containsKey('idToken')) {
+      hasError = false;
+      message = 'Authentication Succeeded';
+      _authenticatedUser = User(res['idToken'], email, password);
+    } else if (res['error']['message'] == 'EMAIL_NOT_FOUND' ||
+        res['error']['message'] == 'INVALID_PASSWORD') {
+      hasError = true;
+      message = 'Either the email or password is invalid';
+    } else {
+      hasError = true;
+    }
+    return {"success": !hasError, "message": message};
   }
 
   /** 
@@ -350,7 +391,6 @@ mixin UserModel on ConnectedProductsModel {
    * ! Always notifylisteners for ui changes listening on scoped model
    */
   Future<Map<String, dynamic>> signUp(String email, String password) async {
-    final String _apiKey = "AIzaSyDs4DweYP5hDkE_0kRU-7NF8TxWY3GnIes";
     final String _endPoint =
         "https://www.googleapis.com/identitytoolkit/v3/relyingparty/signupNewUser?key=";
     final Map<String, dynamic> payload = {
@@ -359,7 +399,7 @@ mixin UserModel on ConnectedProductsModel {
       "returnSecureToken": true //* required by firebase to be always true.
     };
 
-    _isLoading = true; 
+    _isLoading = true;
     notifyListeners();
 
     http.Response response =

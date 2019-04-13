@@ -117,38 +117,35 @@ class AuthPageState extends State<AuthPage> {
       return;
     this.authKey.currentState.save();
 
+    Map<String, dynamic> res;
     if (_curAuthMode == AuthMode.Login) {
-      login(widget._creds['email'], widget._creds['password']);
-      Navigator.pushReplacementNamed(context, '/products');
+      res = await login(widget._creds['email'], widget._creds['password']);
     } else if (_curAuthMode == AuthMode.SignUp) {
-      Map<String, dynamic> res =
-          await signUp(widget._creds['email'], widget._creds['password']);
-      if (res['success'] == true) {
-        login(widget._creds['email'], widget._creds['password']);
-        Navigator.pushReplacementNamed(context, '/products');
-      } else {
-        // * context we get from the state class as this is used within that.
-        showDialog(
-            context: context,
-            builder: (BuildContext context) {
-              return AlertDialog(
-                title: Text("An Error Occured"),
-                content: Text(res['message']),
-                actions: <Widget>[
-                  FlatButton(
-                    child: Text("Okay"),
-                    onPressed: () {
-                      Navigator.of(context)
-                          .pop(); // * pops the dialog off the view.
-                    },
-                  ),
-                ],
-              );
-            });
-      }
+      res = await signUp(widget._creds['email'], widget._creds['password']);
     }
-    print(widget._creds['email']);
-    print(widget._creds['password']);
+
+    if (res['success'] == true) {
+      Navigator.pushReplacementNamed(context, '/products');
+    } else {
+      // * context we get from the state class as this is used within that.
+      showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: Text("An Error Occured"),
+              content: Text(res['message']),
+              actions: <Widget>[
+                FlatButton(
+                  child: Text("Okay"),
+                  onPressed: () {
+                    Navigator.of(context)
+                        .pop(); // * pops the dialog off the view.
+                  },
+                ),
+              ],
+            );
+          });
+    }
   }
 
   Widget _buildLoginButton() {
