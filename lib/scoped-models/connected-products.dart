@@ -22,10 +22,12 @@ mixin ConnectedProductsModel on Model {
   * set when:
   * clicked on info button of product card
   * edit button in product list 
+  * Signing up with a new email address
   * 
   * unset when 
   * back from product page 
   * submit of edit screen 
+  * Firebase returns result for a new sign up
   * 
   */
   String _selectedProductId;
@@ -36,7 +38,18 @@ mixin ConnectedProductsModel on Model {
     return _selectedProductId;
   }
 }
-
+/** 
+ * * addProduct
+ * * title - title of the product 
+ * * desc - description of the product 
+ * * price - Price as a double 
+ * * image - defaults to a hardcoded image 
+ * * isFavorite - while creating, favorite flag is set to false by default 
+ * 
+ * construct product map 
+ * post it to firebase 
+ * Once firebase returns if it is success, create a Product object and add to _products list. 
+ */
 mixin ProductsModel on ConnectedProductsModel {
   bool _isFavoriteMode = false;
 
@@ -307,7 +320,7 @@ mixin ProductsModel on ConnectedProductsModel {
                 userEmail: product['userEmail'],
                 userId: product['userId'],
                 image: product['image'],
-                isFavorite: product['isFavorite'],
+                isFavorite: product['isFavorite']==null?false:product['isFavorite'],
               );
               _products.add(p);
             },
@@ -334,6 +347,7 @@ mixin UserModel on ConnectedProductsModel {
    * * Sign up a user to firebase backend. 
    * * Returns a future. 
    * ! Write async in front of a method if you want to use await within it. 
+   * ! Always notifylisteners for ui changes listening on scoped model
    */
   Future<Map<String, dynamic>> signUp(String email, String password) async {
     final String _apiKey = "AIzaSyDs4DweYP5hDkE_0kRU-7NF8TxWY3GnIes";
@@ -345,8 +359,14 @@ mixin UserModel on ConnectedProductsModel {
       "returnSecureToken": true //* required by firebase to be always true.
     };
 
+    _isLoading = true; 
+    notifyListeners();
+
     http.Response response =
         await http.post(_endPoint + _apiKey, body: convert.jsonEncode(payload));
+
+    _isLoading = false;
+    notifyListeners();
 
     final Map<String, dynamic> res = convert.jsonDecode(response.body);
     bool hasError = true;
