@@ -111,16 +111,24 @@ class AuthPageState extends State<AuthPage> {
     );
   }
 
-  void submit(Function login) {
+  void submit(Function login, Function signUp) async {
     print(widget._creds['agreed']);
     if (!this.authKey.currentState.validate() || !(widget._creds['agreed']))
       return;
     this.authKey.currentState.save();
-    login(widget._creds['email'], widget._creds['password']);
+
+    if(_curAuthMode == AuthMode.Login){
+      login(widget._creds['email'], widget._creds['password']);
+      Navigator.pushReplacementNamed(context, '/products');
+    }else if(_curAuthMode == AuthMode.SignUp){
+      Map<String, dynamic> res = await signUp(widget._creds['email'], widget._creds['password']);
+      if(res['success'] == true){
+        login(widget._creds['email'], widget._creds['password']);
+        Navigator.pushReplacementNamed(context, '/products');
+      }
+    }
     print(widget._creds['email']);
     print(widget._creds['password']);
-
-    Navigator.pushReplacementNamed(context, '/products');
   }
 
   Widget _buildLoginButton() {
@@ -129,7 +137,7 @@ class AuthPageState extends State<AuthPage> {
         return RaisedButton(
           textColor: Colors.white70,
           child: Text("Login"),
-          onPressed: () => this.submit(model.login),
+          onPressed: () => this.submit(model.login, model.signUp),
         );
       },
     );

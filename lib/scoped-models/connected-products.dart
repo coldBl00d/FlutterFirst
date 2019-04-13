@@ -332,4 +332,26 @@ mixin UserModel on ConnectedProductsModel {
   void login(String email, String password) {
     _authenticatedUser = User('jdifhendlci', email, password);
   }
+
+  /** 
+   * signUp
+   * * Sign up a user to firebase backend. 
+   * * Returns a future. 
+   * ! Write async in front of a method if you want to use await within it. 
+   */
+  Future<Map<String, dynamic>> signUp(String email, String password) async {
+    final String _apiKey = "AIzaSyDs4DweYP5hDkE_0kRU-7NF8TxWY3GnIes";
+    final String _endPoint = "https://www.googleapis.com/identitytoolkit/v3/relyingparty/signupNewUser?key=";
+    final Map<String, dynamic> payload = {
+      "email":email, 
+      "password":password,
+      "returnSecureToken":true //* required by firebase to be always true. 
+    };
+
+    http.Response response = await http.post(_endPoint+_apiKey, body: convert.jsonEncode(payload));
+
+    Map<String, dynamic> res = convert.jsonDecode(response.body);
+
+    return {"success":true, "message":"Authentication succeeded"}; 
+  }
 }
