@@ -10,7 +10,7 @@ mixin ConnectedProductsModel on Model {
   User _authenticatedUser;
   //int _selectedProductIndex;
   final String _firebaseUrl = 'https://flutter-products-69c0b.firebaseio.com';
-  
+
   /**
    * * loading screen of create, edit, main list and manage product list 
    */
@@ -35,8 +35,6 @@ mixin ConnectedProductsModel on Model {
   String get selectedProductId {
     return _selectedProductId;
   }
-
-  
 }
 
 mixin ProductsModel on ConnectedProductsModel {
@@ -94,14 +92,14 @@ mixin ProductsModel on ConnectedProductsModel {
           _isLoading = false;
           notifyListeners();
           return true;
-        }else{
-          // * Not successfull 
+        } else {
+          // * Not successfull
           _isLoading = false;
           notifyListeners();
           return false;
         }
       },
-    ).catchError((error){
+    ).catchError((error) {
       _isLoading = false;
       notifyListeners();
       return false;
@@ -145,13 +143,13 @@ mixin ProductsModel on ConnectedProductsModel {
 
         if (index != -1) {
           this._products.removeAt(index);
-          debugPrint("Deleted product at index "+index.toString());
+          debugPrint("Deleted product at index " + index.toString());
         }
         _selectedProductId = null;
         notifyListeners();
         return true;
       }
-    }).catchError((error){
+    }).catchError((error) {
       _isLoading = false;
       notifyListeners();
       return false;
@@ -166,7 +164,7 @@ mixin ProductsModel on ConnectedProductsModel {
       bool isFavorite = false,
       String userEmail,
       String userId,
-      bool unsetSelectedAfterUpdate=true}) {
+      bool unsetSelectedAfterUpdate = true}) {
     _isLoading = true;
     notifyListeners();
 
@@ -220,15 +218,13 @@ mixin ProductsModel on ConnectedProductsModel {
         this.setSelectedProductId(null);
       }
       notifyListeners();
-    }).catchError((error){
+    }).catchError((error) {
       _isLoading = false;
       notifyListeners();
       return false;
     });
     //this._selectedProductIndex = null;
   }
-
-  
 
 //! Flaky code
   Product getSelectedProduct() {
@@ -320,7 +316,7 @@ mixin ProductsModel on ConnectedProductsModel {
         _isLoading = false;
         notifyListeners();
       },
-    ).catchError((error){
+    ).catchError((error) {
       _isLoading = false;
       notifyListeners();
       return null;
@@ -341,17 +337,30 @@ mixin UserModel on ConnectedProductsModel {
    */
   Future<Map<String, dynamic>> signUp(String email, String password) async {
     final String _apiKey = "AIzaSyDs4DweYP5hDkE_0kRU-7NF8TxWY3GnIes";
-    final String _endPoint = "https://www.googleapis.com/identitytoolkit/v3/relyingparty/signupNewUser?key=";
+    final String _endPoint =
+        "https://www.googleapis.com/identitytoolkit/v3/relyingparty/signupNewUser?key=";
     final Map<String, dynamic> payload = {
-      "email":email, 
-      "password":password,
-      "returnSecureToken":true //* required by firebase to be always true. 
+      "email": email,
+      "password": password,
+      "returnSecureToken": true //* required by firebase to be always true.
     };
 
-    http.Response response = await http.post(_endPoint+_apiKey, body: convert.jsonEncode(payload));
+    http.Response response =
+        await http.post(_endPoint + _apiKey, body: convert.jsonEncode(payload));
 
-    Map<String, dynamic> res = convert.jsonDecode(response.body);
+    final Map<String, dynamic> res = convert.jsonDecode(response.body);
+    bool hasError = true;
+    String message = 'Something went wrong';
 
-    return {"success":true, "message":"Authentication succeeded"}; 
+    if (res.containsKey('idToken')) {
+      hasError = false;
+      message = 'Authentication Succeeded';
+    } else if (res['error']['message'] == 'EMAIL_EXISTS') {
+      hasError = true;
+      message = 'Email already exists';
+    } else {
+      hasError = true;
+    }
+    return {"success": !hasError, "message": message};
   }
 }

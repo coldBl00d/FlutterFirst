@@ -117,14 +117,34 @@ class AuthPageState extends State<AuthPage> {
       return;
     this.authKey.currentState.save();
 
-    if(_curAuthMode == AuthMode.Login){
+    if (_curAuthMode == AuthMode.Login) {
       login(widget._creds['email'], widget._creds['password']);
       Navigator.pushReplacementNamed(context, '/products');
-    }else if(_curAuthMode == AuthMode.SignUp){
-      Map<String, dynamic> res = await signUp(widget._creds['email'], widget._creds['password']);
-      if(res['success'] == true){
+    } else if (_curAuthMode == AuthMode.SignUp) {
+      Map<String, dynamic> res =
+          await signUp(widget._creds['email'], widget._creds['password']);
+      if (res['success'] == true) {
         login(widget._creds['email'], widget._creds['password']);
         Navigator.pushReplacementNamed(context, '/products');
+      } else {
+        // * context we get from the state class as this is used within that.
+        showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return AlertDialog(
+                title: Text("An Error Occured"),
+                content: Text(res['message']),
+                actions: <Widget>[
+                  FlatButton(
+                    child: Text("Okay"),
+                    onPressed: () {
+                      Navigator.of(context)
+                          .pop(); // * pops the dialog off the view.
+                    },
+                  ),
+                ],
+              );
+            });
       }
     }
     print(widget._creds['email']);
@@ -167,7 +187,9 @@ class AuthPageState extends State<AuthPage> {
                     SizedBox(height: 10.0),
                     this._buildPasswordTF(),
                     SizedBox(height: 10.0),
-                    _curAuthMode == AuthMode.SignUp? this._buildConfirmPasswordTF(): Container(),
+                    _curAuthMode == AuthMode.SignUp
+                        ? this._buildConfirmPasswordTF()
+                        : Container(),
                     this._buildAcceptSwitch(),
                     SizedBox(
                       height: 10.0,
@@ -175,7 +197,7 @@ class AuthPageState extends State<AuthPage> {
                     FlatButton(
                       child: Text(
                           "${_curAuthMode == AuthMode.Login ? 'Sign Up' : 'Login'}"),
-                          onPressed: switchAuthMode,
+                      onPressed: switchAuthMode,
                     ),
                     SizedBox(
                       height: 10.0,
@@ -191,14 +213,14 @@ class AuthPageState extends State<AuthPage> {
     );
   }
 
-  void switchAuthMode(){
-   setState(() {
-     if(_curAuthMode == AuthMode.Login){
-      _curAuthMode = AuthMode.SignUp;
-    }else{
-      _curAuthMode = AuthMode.Login;
-    } 
-   });
+  void switchAuthMode() {
+    setState(() {
+      if (_curAuthMode == AuthMode.Login) {
+        _curAuthMode = AuthMode.SignUp;
+      } else {
+        _curAuthMode = AuthMode.Login;
+      }
+    });
   }
 
   @override
