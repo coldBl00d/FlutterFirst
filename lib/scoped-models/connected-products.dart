@@ -80,7 +80,7 @@ mixin ProductsModel on ConnectedProductsModel {
 
     return http
         .post(
-      this._firebaseUrl + '/products.json',
+      this._firebaseUrl + '/products.json?auth=${_authenticatedUser.token}',
       body: convert.json.encode(productData),
     )
         .then(
@@ -149,7 +149,7 @@ mixin ProductsModel on ConnectedProductsModel {
     print("Delete Product " + id);
 
     return http
-        .delete(_firebaseUrl + '/products/${id}.json')
+        .delete(_firebaseUrl + '/products/${id}.json?auth=${_authenticatedUser.token}')
         .then((http.Response res) {
       if (res.statusCode == 200) {
         index = _products.indexWhere((Product product) {
@@ -213,7 +213,7 @@ mixin ProductsModel on ConnectedProductsModel {
     };
 
     return http
-        .put(_firebaseUrl + '/products/${updatedProduct.id}.json',
+        .put(_firebaseUrl + '/products/${updatedProduct.id}.json?auth=${_authenticatedUser.token}',
             body: convert.json.encode(updateData))
         .then((http.Response res) {
       if (res.statusCode == 200) {
@@ -307,7 +307,7 @@ mixin ProductsModel on ConnectedProductsModel {
     print("Setting isloading to true by fetchProduct");
     notifyListeners();
     _products.clear();
-    return http.get(_firebaseUrl + '/products.json').then(
+    return http.get(_firebaseUrl + '/products.json?auth=${_authenticatedUser.token}').then(
       (http.Response res) {
         print(convert.json.decode(res.body).toString());
         Map<String, dynamic> bodyMap = convert.json.decode(res.body);
@@ -386,7 +386,7 @@ mixin UserModel on ConnectedProductsModel {
     if (res.containsKey('idToken')) {
       hasError = false;
       message = 'Authentication Succeeded';
-      _authenticatedUser = User(res['idToken'], email, password);
+      _authenticatedUser = User(res['localId'], email, res['idToken']);
     } else if (res['error']['message'] == 'EMAIL_NOT_FOUND' ||
         res['error']['message'] == 'INVALID_PASSWORD') {
       hasError = true;
