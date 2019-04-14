@@ -28,11 +28,21 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
+  final MainModel _mainModel = MainModel();
+  /**
+   * Login the user if token exist in the shared preference 
+   * */
+  @override
+  void initState() {
+    // TODO: implement initState
+    _mainModel.autoAuthenticate();
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     // TODO: implement build
-    //Scaffold create the white page
-    final MainModel _mainModel =MainModel(); 
+    //Scaffold create the white pag
     return ScopedModel<MainModel>(
       model: _mainModel,
       child: MaterialApp(
@@ -42,11 +52,19 @@ class _MyAppState extends State<MyApp> {
             accentColor: Colors.pinkAccent,
             buttonColor: Colors.pinkAccent),
         //home: AuthPage(),
+        //represents home --> either have this or home argument in the material app
         routes: {
-          '/': (BuildContext context) =>
-              AuthPage(), //represents home --> either have this or home argument in the material app
+          '/': (BuildContext context) => ScopedModelDescendant(
+                builder: (BuildContext context, Widget child, MainModel model) {
+                  if (model.authenticatedUser != null) {
+                    return ProductsPage(_mainModel);
+                  }
+                  return AuthPage();
+                },
+              ),
           '/products': (BuildContext context) => ProductsPage(_mainModel),
-          '/admin': (BuildContext context) => ManageProductsPage(model:_mainModel),
+          '/admin': (BuildContext context) =>
+              ManageProductsPage(model: _mainModel),
           // '/product':(BuildContext context) => ProductPage()
         },
         onGenerateRoute: (RouteSettings settings) {
@@ -61,7 +79,7 @@ class _MyAppState extends State<MyApp> {
             return MaterialPageRoute<bool>(
               builder: (BuildContext context) {
                 _mainModel.setSelectedProductId(productId);
-                return ProductPage(model:_mainModel);
+                return ProductPage(model: _mainModel);
               },
             );
           }

@@ -5,6 +5,7 @@ import 'package:scoped_model/scoped_model.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert' as convert;
 import '../models/auth.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 mixin ConnectedProductsModel on Model {
   final List<Product> _products = [];
@@ -12,6 +13,7 @@ mixin ConnectedProductsModel on Model {
   //int _selectedProductIndex;
   final String _firebaseUrl = 'https://flutter-products-69c0b.firebaseio.com';
   final String _apiKey = "AIzaSyDs4DweYP5hDkE_0kRU-7NF8TxWY3GnIes";
+  SharedPreferences _pref;
 
   /**
    * * loading screen of create, edit, main list and manage product list 
@@ -35,6 +37,8 @@ mixin ConnectedProductsModel on Model {
   String _selectedProductId;
 
   bool get isLoading => _isLoading;
+
+  User get authenticatedUser => _authenticatedUser;
 
   String get selectedProductId {
     return _selectedProductId;
@@ -149,7 +153,8 @@ mixin ProductsModel on ConnectedProductsModel {
     print("Delete Product " + id);
 
     return http
-        .delete(_firebaseUrl + '/products/${id}.json?auth=${_authenticatedUser.token}')
+        .delete(_firebaseUrl +
+            '/products/${id}.json?auth=${_authenticatedUser.token}')
         .then((http.Response res) {
       if (res.statusCode == 200) {
         index = _products.indexWhere((Product product) {
@@ -213,7 +218,9 @@ mixin ProductsModel on ConnectedProductsModel {
     };
 
     return http
-        .put(_firebaseUrl + '/products/${updatedProduct.id}.json?auth=${_authenticatedUser.token}',
+        .put(
+            _firebaseUrl +
+                '/products/${updatedProduct.id}.json?auth=${_authenticatedUser.token}',
             body: convert.json.encode(updateData))
         .then((http.Response res) {
       if (res.statusCode == 200) {
@@ -307,7 +314,9 @@ mixin ProductsModel on ConnectedProductsModel {
     print("Setting isloading to true by fetchProduct");
     notifyListeners();
     _products.clear();
-    return http.get(_firebaseUrl + '/products.json?auth=${_authenticatedUser.token}').then(
+    return http
+        .get(_firebaseUrl + '/products.json?auth=${_authenticatedUser.token}')
+        .then(
       (http.Response res) {
         print(convert.json.decode(res.body).toString());
         Map<String, dynamic> bodyMap = convert.json.decode(res.body);
@@ -387,6 +396,9 @@ mixin UserModel on ConnectedProductsModel {
       hasError = false;
       message = 'Authentication Succeeded';
       _authenticatedUser = User(res['localId'], email, res['idToken']);
+      storeDataInSharedPreference('idToken', res['idToken']);
+      storeDataInSharedPreference('UserEmail', email);
+      storeDataInSharedPreference('UserId', res['localId']);
     } else if (res['error']['message'] == 'EMAIL_NOT_FOUND' ||
         res['error']['message'] == 'INVALID_PASSWORD') {
       hasError = true;
@@ -395,5 +407,41 @@ mixin UserModel on ConnectedProductsModel {
       hasError = true;
     }
     return {"success": !hasError, "message": message};
+  }
+
+  void storeDataInSharedPreference(String key, Object value) async {
+    print("Storing into shared prefrence : " + key + ":" + value);
+    if (_pref == null) _pref = await SharedPreferences.getInstance();
+
+    if (value is String) {
+      String v = value;
+      _pref.setString(key, v);
+    }
+  }
+
+  dynamic loadDataInSharedPreference(String key) async {
+    if (_pref == null) _pref = await SharedPreferences.getInstance();
+
+    return _pref.get(key);
+  }
+
+  void autoAuthenticate() async {
+    String l_token = await loadDataInSharedPreference('idToken');
+    print("Trying to auto authenticate...");
+    if (l_token != null) {
+      print("Recieved non null token from shared stored");
+      String l_email = await loadDataInSharedPreference('UserEmail');
+      String l_id = await loadDataInSharedPreference('UserId');
+
+      if (l_email != null && l_id != null) {
+        print("Store is in valid state for auto authentication");
+        _authenticatedUser = User(l_id, l_email, l_token);
+        notifyListeners();
+      } else {
+        print('Auto Authenticate is in invalid state');
+      }
+    } else {
+      print("Skipping auto authentication");
+    }
   }
 }
