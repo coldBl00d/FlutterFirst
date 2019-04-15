@@ -288,24 +288,30 @@ mixin ProductsModel on ConnectedProductsModel {
     return null;
   }
 
-  void toggleProductFavorite(String id, {bool unsetSelectedProduct}) {
+  void toggleProductFavorite(String id, {bool unsetSelectedProduct}) async {
     this.setSelectedProductId(id);
     Product selectedProduct = this.getSelectedProduct();
     bool newIsFavoriteStatus = !(this.getSelectedProduct().isFavorite);
-    this.updateProduct(
-        title: selectedProduct.title,
-        price: selectedProduct.price,
-        desc: selectedProduct.desc,
-        userEmail: _authenticatedUser == null
-            ? "temp@oracle.com"
-            : _authenticatedUser.email,
-        userId: _authenticatedUser == null
-            ? "kajsdkfjaslkdfj"
-            : _authenticatedUser.id,
-        isFavorite: newIsFavoriteStatus,
-        image: selectedProduct.image,
-        unsetSelectedAfterUpdate: unsetSelectedProduct);
+    selectedProduct.isFavorite = newIsFavoriteStatus;
+
     notifyListeners();
+
+    final String url = _firebaseUrl +
+        '/products/${selectedProduct.id}/wishlistUsers/${_authenticatedUser.id}.json?auth=${_authenticatedUser.token}';
+    http.Response res;
+    if (newIsFavoriteStatus) {
+      //add user into the list
+      res = await http.put(url, body: convert.jsonEncode(true));
+    } else {
+      //remove
+      res = await http.delete(url);
+    }
+
+    if (res.statusCode == 200 || res.statusCode == 201) {
+    } else {
+      selectedProduct.isFavorite = !newIsFavoriteStatus;
+      notifyListeners();
+    }
   }
 
   void toggleDisplayMode() {
@@ -323,11 +329,19 @@ mixin ProductsModel on ConnectedProductsModel {
         .get(_firebaseUrl + '/products.json?auth=${_authenticatedUser?.token}')
         .then(
       (http.Response res) {
-        print(convert.json.decode(res.body).toString());
+        //print(convert.json.decode(res.body).toString());
         Map<String, dynamic> bodyMap = convert.json.decode(res.body);
         if (bodyMap != null) {
           bodyMap.forEach(
             (String key, dynamic product) {
+              Map<String, dynamic> wishlistUsers = product['wishlistUsers'];
+              bool evaluatedIsFavorite = false;
+              if(wishlistUsers == null){
+                evaluatedIsFavorite = false;
+              }else {
+                evaluatedIsFavorite = wishlistUsers.containsKey(_authenticatedUser.id);
+              }
+
               Product p = Product(
                 id: key,
                 title: product['title'],
@@ -336,9 +350,7 @@ mixin ProductsModel on ConnectedProductsModel {
                 userEmail: product['userEmail'],
                 userId: product['userId'],
                 image: product['image'],
-                isFavorite: product['isFavorite'] == null
-                    ? false
-                    : product['isFavorite'],
+                isFavorite: evaluatedIsFavorite,
               );
               _products.add(p);
             },
@@ -349,6 +361,7 @@ mixin ProductsModel on ConnectedProductsModel {
       },
     ).catchError((error) {
       _isLoading = false;
+      print(error);
       notifyListeners();
       return null;
     });
