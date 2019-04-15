@@ -312,6 +312,11 @@ mixin ProductsModel on ConnectedProductsModel {
       selectedProduct.isFavorite = !newIsFavoriteStatus;
       notifyListeners();
     }
+
+    this.setSelectedProductId(null);
+
+    
+    
   }
 
   void toggleDisplayMode() {
@@ -320,9 +325,9 @@ mixin ProductsModel on ConnectedProductsModel {
     notifyListeners();
   }
 
-  Future<dynamic> fetchProducts() {
+  Future<dynamic> fetchProducts({bool onlyOwnedProducts = false}) {
     _isLoading = true;
-    print("Setting isloading to true by fetchProduct");
+    print("Setting isloading to true by fetchProduct onlyOwnedProducts enabled :");
     notifyListeners();
     _products.clear();
     return http
@@ -347,7 +352,13 @@ mixin ProductsModel on ConnectedProductsModel {
                     : (product['wishlistUsers'] as Map<String, dynamic>)
                         .containsKey(_authenticatedUser.id),
               );
-              _products.add(p);
+
+              bool owned = product['userId'] == null
+                  ? false
+                  : product['userId'] == _authenticatedUser.id;
+
+              if (!onlyOwnedProducts || (onlyOwnedProducts && owned))
+                _products.add(p);
             },
           );
         }

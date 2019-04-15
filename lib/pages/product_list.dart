@@ -20,7 +20,7 @@ class ListProductState extends State<ListProduct> {
   @override
   void initState() {
     super.initState();
-    widget.model.fetchProducts();
+    widget.model.fetchProducts(onlyOwnedProducts: true);
   }
 
   Widget _buildEditButton(BuildContext context, int index) {
