@@ -444,4 +444,22 @@ mixin UserModel on ConnectedProductsModel {
       print("Skipping auto authentication");
     }
   }
+
+  void logout() {
+    _authenticatedUser = null; 
+    clearStoredLoginData();
+  }
+
+  void clearStoredLoginData() {
+    print("Clearing all login data from shared preference");
+    clearDataInSharedPreference('idToken');
+    clearDataInSharedPreference('UserEmail');
+    clearDataInSharedPreference('UserId');
+  }
+
+  void clearDataInSharedPreference(String key) async {
+    _pref == null?_pref = await SharedPreferences.getInstance():_pref;
+    _pref.remove(key);
+    print("Cleared shared preference :"+ key );
+  }
 }

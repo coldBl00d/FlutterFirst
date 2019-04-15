@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
-import './manage_products.dart';
-import '../widgets/my_drawer.dart';
-import '../widgets/products/products.dart';
-import '../models/Product.dart';
 import 'package:scoped_model/scoped_model.dart';
+
 import '../scoped-models/main.dart';
+import '../widgets/products/products.dart';
+import '../widgets/ui_elements/logout_list_tile.dart';
 
 class ProductsPage extends StatefulWidget {
   //final List<Product> _products;
@@ -51,7 +50,9 @@ class ProductsPageState extends State<ProductsPage> {
                 return ManageProductsPage();
               }));*/
             },
-          )
+          ),
+          Divider(),
+          LogoutListTile(),
         ],
       ),
     );

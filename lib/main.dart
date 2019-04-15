@@ -54,14 +54,7 @@ class _MyAppState extends State<MyApp> {
         //home: AuthPage(),
         //represents home --> either have this or home argument in the material app
         routes: {
-          '/': (BuildContext context) => ScopedModelDescendant(
-                builder: (BuildContext context, Widget child, MainModel model) {
-                  if (model.authenticatedUser != null) {
-                    return ProductsPage(_mainModel);
-                  }
-                  return AuthPage();
-                },
-              ),
+          '/': (BuildContext context) => _mainModel.authenticatedUser != null?ProductsPage(_mainModel):AuthPage(),
           '/products': (BuildContext context) => ProductsPage(_mainModel),
           '/admin': (BuildContext context) =>
               ManageProductsPage(model: _mainModel),

@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
-import '../pages/manage_products.dart';
-import '../pages/products.dart';
 
-class MyDrawer extends StatelessWidget{
+import '../widgets/ui_elements/logout_list_tile.dart';
 
+class MyDrawer extends StatelessWidget {
   MyDrawer();
 
   @override
@@ -14,11 +13,15 @@ class MyDrawer extends StatelessWidget{
         AppBar(
           automaticallyImplyLeading: false,
           title: Text("Choose"),
-          
         ),
-        ListTile(leading: Icon(Icons.shop),title: Text("All Products"), onTap: () {
-          Navigator.pushReplacementNamed(context, '/products');
-        },),
+        ListTile(
+          leading: Icon(Icons.shop),
+          title: Text("All Products"),
+          onTap: () {
+            Navigator.pushReplacementNamed(context, '/products');
+          },
+        ),
+        LogoutListTile(),
       ],
     );
   }
