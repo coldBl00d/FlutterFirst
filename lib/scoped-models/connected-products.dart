@@ -334,14 +334,6 @@ mixin ProductsModel on ConnectedProductsModel {
         if (bodyMap != null) {
           bodyMap.forEach(
             (String key, dynamic product) {
-              Map<String, dynamic> wishlistUsers = product['wishlistUsers'];
-              bool evaluatedIsFavorite = false;
-              if(wishlistUsers == null){
-                evaluatedIsFavorite = false;
-              }else {
-                evaluatedIsFavorite = wishlistUsers.containsKey(_authenticatedUser.id);
-              }
-
               Product p = Product(
                 id: key,
                 title: product['title'],
@@ -350,7 +342,10 @@ mixin ProductsModel on ConnectedProductsModel {
                 userEmail: product['userEmail'],
                 userId: product['userId'],
                 image: product['image'],
-                isFavorite: evaluatedIsFavorite,
+                isFavorite: product['wishlistUsers'] == null
+                    ? false
+                    : (product['wishlistUsers'] as Map<String, dynamic>)
+                        .containsKey(_authenticatedUser.id),
               );
               _products.add(p);
             },
