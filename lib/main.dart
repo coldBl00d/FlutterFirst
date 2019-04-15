@@ -1,12 +1,10 @@
 import 'package:flutter/material.dart';
-import './pages/auth.dart';
-import 'package:flutter/rendering.dart';
-import './pages/manage_products.dart';
-import './pages/products.dart';
-import './pages/product.dart';
-import './models/Product.dart';
 import 'package:scoped_model/scoped_model.dart';
 
+import './pages/auth.dart';
+import './pages/manage_products.dart';
+import './pages/product.dart';
+import './pages/products.dart';
 import './scoped-models/main.dart';
 /*void main() {
   //provided by material file of flutter package
@@ -22,26 +20,23 @@ void main() {
 class MyApp extends StatefulWidget {
   @override
   State<StatefulWidget> createState() {
-    // TODO: implement createState
     return _MyAppState();
   }
 }
 
 class _MyAppState extends State<MyApp> {
   final MainModel _mainModel = MainModel();
-  /**
+  /* 
    * Login the user if token exist in the shared preference 
    * */
   @override
   void initState() {
-    // TODO: implement initState
     _mainModel.autoAuthenticate();
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    // TODO: implement build
     //Scaffold create the white pag
     return ScopedModel<MainModel>(
       model: _mainModel,
