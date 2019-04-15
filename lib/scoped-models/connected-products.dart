@@ -508,6 +508,6 @@ mixin UserModel on ConnectedProductsModel {
    * longer than the tokens validity. 
    */
   void setAuthTimeout(int timeInSeconds) {
-    _authTimer = Timer(Duration(milliseconds: timeInSeconds * 5), logout);
+    _authTimer = Timer(Duration(seconds: timeInSeconds), logout);
   }
 }

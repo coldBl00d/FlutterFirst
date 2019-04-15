@@ -122,7 +122,7 @@ class AuthPageState extends State<AuthPage> {
         widget._creds['email'], widget._creds['password'], authMode: _curAuthMode);
 
     if (res['success'] == true) {
-      //Navigator.pushReplacementNamed(context, '/');
+      Navigator.pushReplacementNamed(context, '/');
     } else {
       // * context we get from the state class as this is used within that.
       showDialog(
