@@ -33,7 +33,7 @@ class AuthPageState extends State<AuthPage> {
 
   Widget _buildEmailTF() {
     return TextFormField(
-      initialValue: 'akhil@ork.com',
+      initialValue: 'akhil.raj@ork.com',
       keyboardType: TextInputType.emailAddress,
       validator: (String email) {
         bool validated = true;
@@ -122,7 +122,7 @@ class AuthPageState extends State<AuthPage> {
         widget._creds['email'], widget._creds['password'], authMode: _curAuthMode);
 
     if (res['success'] == true) {
-      Navigator.pushReplacementNamed(context, '/products');
+      //Navigator.pushReplacementNamed(context, '/');
     } else {
       // * context we get from the state class as this is used within that.
       showDialog(

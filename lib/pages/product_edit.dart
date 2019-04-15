@@ -118,7 +118,7 @@ class EditProductState extends State<EditProduct> {
       ).then(
         (bool success) {
           if (success) {
-            Navigator.pushReplacementNamed(context, '/products')
+            Navigator.pushReplacementNamed(context, '/')
                 .then((_) => setSelectedProduct(null));
           } else {
             showDialog(
@@ -147,7 +147,7 @@ class EditProductState extends State<EditProduct> {
               unsetSelectedAfterUpdate: false)
           .then(
         (_) {
-          Navigator.pushReplacementNamed(context, '/products')
+          Navigator.pushReplacementNamed(context, '/')
               .then((_) => setSelectedProduct(null));
         },
       );

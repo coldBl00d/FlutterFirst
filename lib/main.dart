@@ -26,17 +26,26 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   final MainModel _mainModel = MainModel();
+  bool isAuthenticated = false;
   /* 
    * Login the user if token exist in the shared preference 
    * */
   @override
   void initState() {
     _mainModel.autoAuthenticate();
+    _mainModel.userSubject.listen((bool isAuthenticated) {
+      print("Authentication event consumed with value " +
+          isAuthenticated.toString());
+      setState(() {
+        this.isAuthenticated = isAuthenticated;
+      });
+    });
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
+    print("Main build execution starts");
     //Scaffold create the white pag
     return ScopedModel<MainModel>(
       model: _mainModel,
@@ -49,14 +58,18 @@ class _MyAppState extends State<MyApp> {
         //home: AuthPage(),
         //represents home --> either have this or home argument in the material app
         routes: {
-          '/': (BuildContext context) => _mainModel.authenticatedUser != null?ProductsPage(_mainModel):AuthPage(),
-          '/products': (BuildContext context) => ProductsPage(_mainModel),
-          '/admin': (BuildContext context) =>
-              ManageProductsPage(model: _mainModel),
+          '/': (BuildContext context) =>
+              isAuthenticated == true ? ProductsPage(_mainModel) : AuthPage(),
+          //'/products': (BuildContext context) => ProductsPage(_mainModel),
+          '/admin': (BuildContext context) => isAuthenticated
+              ? ManageProductsPage(model: _mainModel)
+              : AuthPage(),
           // '/product':(BuildContext context) => ProductPage()
         },
         onGenerateRoute: (RouteSettings settings) {
-          //a function that will be called when we navigate to a named route which is not registered in the routes registery
+          //?a function that will be called when we navigate to a named route which is not registered in the routes registery
+          //*To protect these routes
+          
           final List<String> pathElement = settings.name.split('/');
           if (pathElement[0] != '') {
             //this will not load any page
@@ -67,7 +80,7 @@ class _MyAppState extends State<MyApp> {
             return MaterialPageRoute<bool>(
               builder: (BuildContext context) {
                 _mainModel.setSelectedProductId(productId);
-                return ProductPage(model: _mainModel);
+                return isAuthenticated?ProductPage(model: _mainModel):AuthPage();
               },
             );
           }
@@ -75,7 +88,7 @@ class _MyAppState extends State<MyApp> {
 
         onUnknownRoute: (RouteSettings settings) {
           return MaterialPageRoute(builder: (BuildContext context) {
-            return ProductsPage(_mainModel);
+            return isAuthenticated?ProductsPage(_mainModel):AuthPage();
           });
         },
       ),

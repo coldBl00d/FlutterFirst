@@ -1,11 +1,15 @@
+import 'dart:convert' as convert;
+import 'dart:async';
+
 import 'package:course/models/Product.dart';
 import 'package:course/models/user.dart';
 import 'package:flutter/material.dart';
-import 'package:scoped_model/scoped_model.dart';
 import 'package:http/http.dart' as http;
-import 'dart:convert' as convert;
-import '../models/auth.dart';
+import 'package:scoped_model/scoped_model.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:rxdart/subjects.dart'; //* Allows to emit data and subcribe to it.
+
+import '../models/auth.dart';
 
 mixin ConnectedProductsModel on Model {
   final List<Product> _products = [];
@@ -14,6 +18,7 @@ mixin ConnectedProductsModel on Model {
   final String _firebaseUrl = 'https://flutter-products-69c0b.firebaseio.com';
   final String _apiKey = "AIzaSyDs4DweYP5hDkE_0kRU-7NF8TxWY3GnIes";
   SharedPreferences _pref;
+  Timer _authTimer;
 
   /**
    * * loading screen of create, edit, main list and manage product list 
@@ -315,7 +320,7 @@ mixin ProductsModel on ConnectedProductsModel {
     notifyListeners();
     _products.clear();
     return http
-        .get(_firebaseUrl + '/products.json?auth=${_authenticatedUser.token}')
+        .get(_firebaseUrl + '/products.json?auth=${_authenticatedUser?.token}')
         .then(
       (http.Response res) {
         print(convert.json.decode(res.body).toString());
@@ -351,6 +356,12 @@ mixin ProductsModel on ConnectedProductsModel {
 }
 
 mixin UserModel on ConnectedProductsModel {
+  // * use to emit when user is not authenticated.
+  // ! Can emit data as '_userSubject.add(false)' cause it to emit false.
+  PublishSubject<bool> _userSubject = PublishSubject();
+
+  PublishSubject<bool> get userSubject => _userSubject;
+
   /*
   * Login 
   * email and password 
@@ -396,9 +407,22 @@ mixin UserModel on ConnectedProductsModel {
       hasError = false;
       message = 'Authentication Succeeded';
       _authenticatedUser = User(res['localId'], email, res['idToken']);
+      _userSubject.add(
+          true); //emit authenticated for the main app to load product list page
       storeDataInSharedPreference('idToken', res['idToken']);
       storeDataInSharedPreference('UserEmail', email);
       storeDataInSharedPreference('UserId', res['localId']);
+
+      // * Logs out user if now is greater than expiry time, so storing it.
+
+      final DateTime now = DateTime.now();
+      final DateTime expireTime =
+          now.add(Duration(seconds: int.parse(res['expiresIn'])));
+      storeDataInSharedPreference('ExpiryTime', expireTime.toString());
+
+      // * Log out user if session is greater than expiry seconds.
+
+      this.setAuthTimeout(int.parse(res['expiresIn']));
     } else if (res['error']['message'] == 'EMAIL_NOT_FOUND' ||
         res['error']['message'] == 'INVALID_PASSWORD') {
       hasError = true;
@@ -426,17 +450,30 @@ mixin UserModel on ConnectedProductsModel {
   }
 
   void autoAuthenticate() async {
-    String l_token = await loadDataInSharedPreference('idToken');
+    final String l_token = await loadDataInSharedPreference('idToken');
+    final String l_expiryTime = await loadDataInSharedPreference('ExpiryTime');
+
     print("Trying to auto authenticate...");
     if (l_token != null) {
       print("Recieved non null token from shared stored");
       String l_email = await loadDataInSharedPreference('UserEmail');
       String l_id = await loadDataInSharedPreference('UserId');
-
+      DateTime l_parsedExpiryTime = DateTime.parse(l_expiryTime);
+      //* Return  if token is already expired.
+      if (l_parsedExpiryTime.isBefore(DateTime.now())) {
+        _authenticatedUser = null;
+        return;
+      }
+      //*Calculate new token lifespan and setup timer.
+      final int l_tokenLifeSpan =
+          l_parsedExpiryTime.difference(DateTime.now()).inSeconds;
+      this.setAuthTimeout(l_tokenLifeSpan);
       if (l_email != null && l_id != null) {
         print("Store is in valid state for auto authentication");
         _authenticatedUser = User(l_id, l_email, l_token);
         notifyListeners();
+        _userSubject.add(true);
+        print("Auto Authentication successfull");
       } else {
         print('Auto Authenticate is in invalid state');
       }
@@ -446,8 +483,11 @@ mixin UserModel on ConnectedProductsModel {
   }
 
   void logout() {
-    _authenticatedUser = null; 
+    print('Logging out user');
+    _authenticatedUser = null;
     clearStoredLoginData();
+    _authTimer?.cancel();
+    _userSubject.add(false);
   }
 
   void clearStoredLoginData() {
@@ -458,8 +498,16 @@ mixin UserModel on ConnectedProductsModel {
   }
 
   void clearDataInSharedPreference(String key) async {
-    _pref == null?_pref = await SharedPreferences.getInstance():_pref;
+    _pref == null ? _pref = await SharedPreferences.getInstance() : _pref;
     _pref.remove(key);
-    print("Cleared shared preference :"+ key );
+    print("Cleared shared preference :" + key);
+  }
+
+  /**
+   * Auto log out user if the current session is 
+   * longer than the tokens validity. 
+   */
+  void setAuthTimeout(int timeInSeconds) {
+    _authTimer = Timer(Duration(milliseconds: timeInSeconds * 5), logout);
   }
 }
